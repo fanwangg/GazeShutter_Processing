@@ -34,7 +34,7 @@ void setup() {
    //frameRate(30);
    
    mMode = MODE.USER_TESTING;
-   mDesign = DESIGN.DYNAMIC_1_POINT;
+   mDesign = DESIGN.STATIC;
    
    mUserTester = new UserTester();
    mVisualizer = new Visualizer();

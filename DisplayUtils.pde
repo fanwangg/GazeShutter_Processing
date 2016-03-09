@@ -4,7 +4,6 @@ final int TRAIL_PER_TARGET = 3;
 final int TOTAL_TRAIL_NUM = TARGET_ROW_NUM * TARGET_COL_NUM * TRAIL_PER_TARGET;
 final String outputPath = new String("data/");
 
-
 //GUI const
 final color COLOR_WHITE = color(255,255,255);
 final color COLOR_BLACK = color(0,0,0);
@@ -27,11 +26,13 @@ final int HOMEPOSITION_MARGIN = 10;
 
 final int HALO_BTN_RADIUS = 72;
 final int HALO_BTN_DIAMETER = HALO_BTN_RADIUS*2;
+final int HALO_BTN_DIST_THRESHOLD = 30;
 final int INFO_MARGIN = 300;
 
 final int targetWidth = WIREFRAME_WIDTH / TARGET_COL_NUM;
 final int targetHeight = WIREFRAME_HEIGHT / TARGET_ROW_NUM;
 final int CROSS_SIZE = 16;
+
 
 void drawWireframe(){
   noFill();
@@ -88,7 +89,8 @@ void drawHaloButton(){
   int dy = mouseY - WIREFRAME_UL_Y - int((r+0.5)*targetHeight);
   double distance = sqrt(dx*dx + dy*dy);
   int margin = HALO_BTN_RADIUS/2;
-  if(distance < CROSS_SIZE && mUserTester.isGazing){
+  
+  if(distance < HALO_BTN_DIST_THRESHOLD && mUserTester.isGazing){
     pushMatrix();
     translate(WIREFRAME_UL_X, WIREFRAME_UL_Y);
     fill(COLOR_HALOBTN);
@@ -126,7 +128,7 @@ void drawHaloButton(){
       
       
       case STATIC:
-        ellipse(0.5*targetHeight, 0.5*targetWidth, 10, 10);
+        ellipse(3.5*targetWidth, 0, HALO_BTN_RADIUS/2, HALO_BTN_RADIUS/2);
         break;
     }
         
@@ -179,4 +181,15 @@ void drawVisInfo(){
   text("Task:("+mVisualizer.currentTarget/TARGET_COL_NUM+","+mVisualizer.currentTarget%TARGET_COL_NUM+")", 10, 100);
    
   popMatrix();
+}
+
+
+boolean isWithinHomeBtn(int x, int y){
+  int UL_X = width/2 - HOMEPOSITION_WIDTH/2;
+  int UL_Y = height - HOMEPOSITION_HEIGHT - HOMEPOSITION_MARGIN;
+  if(x<UL_X || UL_X+HOMEPOSITION_WIDTH<x)
+    return false;
+  if(y<UL_Y || UL_Y+HOMEPOSITION_HEIGHT<y)
+    return false;
+  return true;
 }

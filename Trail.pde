@@ -44,6 +44,21 @@ public class Trail{
     String fileName = new String(userID+"/"+trailID+"_"+target+".json");
     saveJSONObject(json, outputPath+fileName);
   }
+  
+  boolean isWithinTarget(){
+    int r = this.target / TARGET_COL_NUM;
+    int c = this.target % TARGET_COL_NUM;
+    
+    int dx = mouseX - WIREFRAME_UL_X - int((c+0.5)*targetWidth);
+    int dy = mouseY - WIREFRAME_UL_Y - int((r+0.5)*targetHeight);
+    
+    double distance = sqrt(dx*dx + dy*dy);
+    
+    if(distance < HALO_BTN_DIST_THRESHOLD)
+      return true; 
+   
+    return false;
+  }
 }
 
 public class Point{

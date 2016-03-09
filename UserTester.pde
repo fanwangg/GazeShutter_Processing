@@ -40,7 +40,6 @@ public class UserTester{
      }
   }
   
-  
   void finish(){
     noLoop();
     isFinished = true;
@@ -51,7 +50,6 @@ public class UserTester{
        currentTrail.update();
     }
   }
-  
   
   /*
    *  The main functions of processing 

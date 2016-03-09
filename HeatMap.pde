@@ -1,6 +1,6 @@
 int dotSize = 24;
 ArrayList points = new ArrayList() ;
-color[] gradientColors = {color(255,0,0), color(255,255,0), color(0, 255, 0), color(0,255,255), color(0,0,255)};
+color[] gradientColors = {color(255,0,0,150), color(255,255,0,150), color(0,255,0,150), color(0,255,255,150), color(0,0,255,150)};
 
 class Heatmap {
   ArrayList points;
@@ -66,7 +66,6 @@ class Heatmap {
       f.draw();
     }
     
-    //JS is currently too slow to render this properly...
     convertGrayscaleToColor();
   }
   
@@ -74,16 +73,33 @@ class Heatmap {
     loadPixels();
     for(int i = 0; i < pixels.length; i++) {
       color currentColor = pixels[i];
-      //if(color(255) != currentColor) {
-        float currentAlpha = red(currentColor); // Alpha not preserved, useless...
-        pixels[i] = grad.gradientLerpColor(currentAlpha/255); // Take one channel and use as grayscale value
-
+      if(color(255) != currentColor) {
+        float currentAlpha = red(currentColor);
+        //pixels[i] = grad.gradientLerpColor(currentAlpha/255); // Take one channel and use as grayscale value
+        pixels[i] = getHeatMapColor(currentAlpha);
         // println("Color: " + hex(currentColor));
         // println("New Color: " + hex(pixels[i]));
-      //}
+      }
     } 
     updatePixels();
   }
+}
+
+color getHeatMapColor(float grayScale){
+  int r,g,b,a;
+  if(grayScale < 128){
+    r = 0;
+    g = int(255.0/128*grayScale); 
+    b = int(255.0 - 255.0/128*grayScale);
+    a = 128;
+  }
+  else{
+    r = int(255.0/128*(grayScale-128));
+    g = int(255.0-255/128*(grayScale-128)); 
+    b = 0;
+    a = 128;
+  }
+  return color(r,g,b,a);
 }
 
 
@@ -92,6 +108,9 @@ class HMGradient {
   HMGradient(color[] colors) {
     this.colors = colors; 
   }
+  
+  
+  
   
   color gradientLerpColor(float degree) {
     int numColors = colors.length;

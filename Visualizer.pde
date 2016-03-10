@@ -5,14 +5,14 @@ public class Visualizer{
   int currentTrailId;
   int currentTarget;
   Heatmap currentHM;
+  boolean mDirtyFlag;
   
   public Visualizer(){
     users = listFileNames(dataPath(""));
     currentUserId = 0;
     currentTrailId = 0;
+    mDirtyFlag = false;
   }
-  
-  
  
   void keyPressed(){
     //update user
@@ -34,6 +34,7 @@ public class Visualizer{
     
     
     //update map
+    mDirtyFlag = true;
     currentHM = new Heatmap(new ArrayList() );
     JSONObject trailJSON = loadJSONObject(dataPath(users[currentUserId]+"/"+trails[currentTrailId]));
     currentTarget = trailJSON.getInt(Trail.TARGET_KEY);
@@ -49,6 +50,10 @@ public class Visualizer{
   }
   
   void draw(){
+    if(!mDirtyFlag)
+      return;
+    mDirtyFlag = true;
+
     noStroke();
     pushMatrix();
     translate(WIREFRAME_UL_X, WIREFRAME_UL_Y);

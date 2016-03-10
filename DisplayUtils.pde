@@ -33,7 +33,6 @@ final int targetWidth = WIREFRAME_WIDTH / TARGET_COL_NUM;
 final int targetHeight = WIREFRAME_HEIGHT / TARGET_ROW_NUM;
 final int CROSS_SIZE = 16;
 
-
 void drawWireframe(){
   noFill();
   pushMatrix();

@@ -9,7 +9,6 @@ class Heatmap {
   
   Heatmap(ArrayList points) {
     this.points = points;
-
     calcMaximum();
   }
   
@@ -21,7 +20,9 @@ class Heatmap {
       }
     }
     
-    if(maximumClicked <= 0) { maximumClicked = 1; }
+    if(maximumClicked <= 0) { 
+      maximumClicked = 1; 
+    }
   }
 
   void click(int x, int y) {
@@ -62,7 +63,7 @@ class Heatmap {
       float intensity = float(point.clicks) / float(maximumClicked);
       //println("Intensity: " + intensity);
       
-      FuzzyDot f = new FuzzyDot(point.x,point.y,dotSize, 1);//intensity);
+      FuzzyDot f = new FuzzyDot(point.x, point.y, dotSize, 1);//intensity);
       f.draw();
     }
     
@@ -74,11 +75,9 @@ class Heatmap {
     for(int i = 0; i < pixels.length; i++) {
       color currentColor = pixels[i];
       if(color(255) != currentColor) {
-        float currentAlpha = red(currentColor);
-        //pixels[i] = grad.gradientLerpColor(currentAlpha/255); // Take one channel and use as grayscale value
+        float currentAlpha = 255-red(currentColor);
         pixels[i] = getHeatMapColor(currentAlpha);
-        // println("Color: " + hex(currentColor));
-        // println("New Color: " + hex(pixels[i]));
+        //pixels[i] = grad.gradientLerpColor(currentAlpha/255); // Take one channel and use as grayscale value
       }
     } 
     updatePixels();
@@ -90,12 +89,12 @@ color getHeatMapColor(float grayScale){
   if(grayScale < 128){
     r = 0;
     g = int(255.0/128*grayScale); 
-    b = int(255.0 - 255.0/128*grayScale);
+    b = 255 - g;
     a = 128;
   }
   else{
     r = int(255.0/128*(grayScale-128));
-    g = int(255.0-255/128*(grayScale-128)); 
+    g = 255 - r;
     b = 0;
     a = 128;
   }
@@ -108,9 +107,6 @@ class HMGradient {
   HMGradient(color[] colors) {
     this.colors = colors; 
   }
-  
-  
-  
   
   color gradientLerpColor(float degree) {
     int numColors = colors.length;

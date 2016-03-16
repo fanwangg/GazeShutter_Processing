@@ -77,24 +77,17 @@ void drawCross(int x, int y){
   line(x, y-CROSS_SIZE, x, y+CROSS_SIZE);
 }
 
-void drawHaloButton(){
-  if(mouseX<WIREFRAME_UL_X || mouseX>WIREFRAME_UL_X+WIREFRAME_WIDTH || mouseY<WIREFRAME_UL_Y || mouseY>WIREFRAME_UL_Y+WIREFRAME_HEIGHT)
-    return;
-    
+void drawHaloButton(){  
   int r = (mouseY - WIREFRAME_UL_Y)/targetHeight;
   int c = (mouseX - WIREFRAME_UL_X)/targetWidth;
-   
-  int dx = mouseX - WIREFRAME_UL_X - int((c+0.5)*targetWidth);
-  int dy = mouseY - WIREFRAME_UL_Y - int((r+0.5)*targetHeight);
-  double distance = sqrt(dx*dx + dy*dy);
-  int margin = HALO_BTN_RADIUS/2;
-  
-  if(distance < HALO_BTN_DIST_THRESHOLD && mUserTester.isGazing){
+
+  if(isWithinTarget() && mUserTester.isGazing){
+    int margin = HALO_BTN_RADIUS/2;
+
     pushMatrix();
     translate(WIREFRAME_UL_X, WIREFRAME_UL_Y);
     fill(COLOR_HALOBTN);
-    
-    
+
     switch(mDesign){
       case DYNAMIC_4_POINT:
         //UP
@@ -182,7 +175,6 @@ void drawVisInfo(){
   popMatrix();
 }
 
-
 boolean isWithinHomeBtn(int x, int y){
   int UL_X = width/2 - HOMEPOSITION_WIDTH/2;
   int UL_Y = height - HOMEPOSITION_HEIGHT - HOMEPOSITION_MARGIN;
@@ -191,4 +183,80 @@ boolean isWithinHomeBtn(int x, int y){
   if(y<UL_Y || UL_Y+HOMEPOSITION_HEIGHT<y)
     return false;
   return true;
+}
+
+boolean isWithinTarget(){
+  int r = (mouseY - WIREFRAME_UL_Y)/targetHeight;
+  int c = (mouseX - WIREFRAME_UL_X)/targetWidth;
+
+  if(mouseX<WIREFRAME_UL_X || mouseX>WIREFRAME_UL_X+WIREFRAME_WIDTH || mouseY<WIREFRAME_UL_Y || mouseY>WIREFRAME_UL_Y+WIREFRAME_HEIGHT)
+    return false;
+     
+  int dx = mouseX - WIREFRAME_UL_X - int((c+0.5)*targetWidth);
+  int dy = mouseY - WIREFRAME_UL_Y - int((r+0.5)*targetHeight);
+  double distance = sqrt(dx*dx + dy*dy);
+
+  return distance < HALO_BTN_DIST_THRESHOLD;
+}
+
+boolean isWithinTarget(Trail trail){
+  int r = trail.getRow();
+  int c = trail.getCol();
+
+  if(mouseX<WIREFRAME_UL_X || mouseX>WIREFRAME_UL_X+WIREFRAME_WIDTH || mouseY<WIREFRAME_UL_Y || mouseY>WIREFRAME_UL_Y+WIREFRAME_HEIGHT)
+    return false;
+     
+  int dx = mouseX - WIREFRAME_UL_X - int((c+0.5)*targetWidth);
+  int dy = mouseY - WIREFRAME_UL_Y - int((r+0.5)*targetHeight);
+  double distance = sqrt(dx*dx + dy*dy);
+
+  return distance < HALO_BTN_DIST_THRESHOLD;
+}
+
+boolean isWithinHaloButton(Trail trail){
+  int r = trail.getRow();
+  int c = trail.getCol();
+
+  int dx, dy;
+  int mx = mouseX - WIREFRAME_UL_X;
+  int my = mouseY - WIREFRAME_UL_Y;
+  int margin = HALO_BTN_RADIUS/2;
+  double distance;
+  switch(mDesign){
+    case DYNAMIC_4_POINT:
+      //UP
+      dx = mx - int((c+0.5)*targetWidth);
+      dy = my - (-margin);
+      distance = sqrt(dx*dx + dy*dy);
+      if(distance<HALO_BTN_DIAMETER && my>0){
+        return true;
+      }
+
+      //RIGHT
+      dx = mx - (WIREFRAME_WIDTH+margin);
+      dy = my - int((r+0.5)*targetHeight);
+      distance = sqrt(dx*dx + dy*dy);
+      if(distance<HALO_BTN_DIAMETER && mx<WIREFRAME_WIDTH){
+        return true;
+      }
+
+      //DOWN
+      dx = mx - int((c+0.5)*targetWidth);
+      dy = my - (WIREFRAME_HEIGHT+margin);
+      distance = sqrt(dx*dx + dy*dy);
+      if(distance<HALO_BTN_DIAMETER && my<WIREFRAME_HEIGHT){
+        return true;
+      }
+          
+      //LEFT
+      dx = mx - (-margin);
+      dy = my - int((r+0.5)*targetHeight);
+      distance = sqrt(dx*dx + dy*dy);
+      if(distance<HALO_BTN_DIAMETER && mx>0){
+        return true;
+      }
+
+      break;
+  }
+  return false;
 }

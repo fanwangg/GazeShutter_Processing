@@ -8,15 +8,17 @@ public class Visualizer{
   boolean mDirtyFlag;
   
   public Visualizer(){
-    users = listFileNames(dataPath(""));
     currentUserId = 0;
     currentTrailId = 0;
     mDirtyFlag = false;
   }
  
   void keyPressed(){
+    users = listFileNames(dataPath(""));
+    if(users==null || users.length==0)
+      return;
+
     //update user
-   
     if(keyCode == UP){
       currentUserId = (currentUserId+users.length-1) % users.length;
     }
@@ -24,7 +26,9 @@ public class Visualizer{
       currentUserId = (currentUserId+1) % users.length;
     }
     trails = listFileNames(dataPath(users[currentUserId]));
-    //update trail
+    if(trails==null || trails.length==0)
+        return;
+      //update trail
     if(keyCode == LEFT){
       currentTrailId = (currentTrailId+trails.length-1) % trails.length;  
     }
@@ -44,7 +48,7 @@ public class Visualizer{
       int x = point.getInt(Point.POINT_X_KEY);
       int y = point.getInt(Point.POINT_Y_KEY);
       int t = point.getInt(Point.POINT_T_KEY);
-      currentHM.click(x,y);
+      currentHM.click(x,y); 
     }
     
   }

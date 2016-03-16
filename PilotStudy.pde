@@ -37,7 +37,7 @@ void setup() {
    //frameRate(30);
    
    mMode = MODE.USER_TESTING;
-   mDesign = DESIGN.STATIC;
+   mDesign = DESIGN.DYNAMIC_4_POINT;
    mCp5 = new ControlP5(this);
    
    mUserTester = new UserTester();

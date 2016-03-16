@@ -24,15 +24,18 @@ public class UserTester{
   void switchGazeState(){
     if(isFinished)
       return;
+
      isGazing = !isGazing;
      
      if(isGazing){
-       if(currentTrail!=null)
-         currentTrail.output();
-         
-       currentTrail = new Trail(userID, trailNum, trailTarget.get(trailNum));
+      //starting of new trail
+      currentTrail = new Trail(userID, trailNum, trailTarget.get(trailNum));
      }
      else{
+      //just in case
+      if(currentTrail!=null)
+        currentTrail.output();
+       
        trailNum++;
        if(trailNum == TOTAL_TRAIL_NUM){
          finish();

@@ -1,5 +1,3 @@
-import controlP5.*;
-
 final boolean DEBUG=false;
 public enum DESIGN{
   DYNAMIC_4_POINT, DYNAMIC_1_POINT, STATIC;
@@ -16,7 +14,6 @@ MODE mMode;
 DESIGN mDesign;
 UserTester mUserTester;
 Visualizer mVisualizer;
-ControlP5 mCp5;
 
 void keyPressed(){
   if(key==TAB){
@@ -38,7 +35,6 @@ void setup() {
    
    mMode = MODE.USER_TESTING;
    mDesign = DESIGN.DYNAMIC_4_POINT;
-   mCp5 = new ControlP5(this);
    
    mUserTester = new UserTester();
    mVisualizer = new Visualizer();

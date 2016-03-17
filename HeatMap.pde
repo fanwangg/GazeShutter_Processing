@@ -169,6 +169,7 @@ class FuzzyDot {
     for(int i = 0; i < steps; i++) {
       ellipse(x,y,diameter-2*i,diameter-2*i);
     }
+    //filter(BLUR, 6);
   }
   
   void setIntensity(float intensity) {

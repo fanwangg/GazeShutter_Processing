@@ -8,6 +8,8 @@ final String outputPath = new String("data/");
 final color COLOR_WHITE = color(255,255,255);
 final color COLOR_BLACK = color(0,0,0);
 final color COLOR_RED = color(255,0,0);
+final color COLOR_GREEN = color(0,255,0);
+final color COLOR_BLUE = color(0,0,255);
 final color COLOR_LIGHTBLUE = color(30,177,237);
 final color COLOR_HALOBTN = COLOR_LIGHTBLUE;
 

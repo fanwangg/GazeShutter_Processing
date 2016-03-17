@@ -1,11 +1,13 @@
 public class Visualizer{
-  String[] users;
-  String[] trails;
+  final int PATH_DOT_SIZE = 20;
   int currentUserId;
   int currentTrailId;
   int currentTarget;
-  Heatmap currentHM;
   boolean mDirtyFlag;
+
+  String[] users;
+  String[] trails;
+  ArrayList<Point> currentPath;
   
   public Visualizer(){
     currentUserId = 0;
@@ -39,7 +41,8 @@ public class Visualizer{
     
     //update map
     mDirtyFlag = true;
-    currentHM = new Heatmap(new ArrayList() );
+    //currentHM = new Heatmap(new ArrayList() );
+    currentPath = new ArrayList<Point>();
     JSONObject trailJSON = loadJSONObject(dataPath(users[currentUserId]+"/"+trails[currentTrailId]));
     currentTarget = trailJSON.getInt(Trail.TARGET_KEY);
     JSONArray pathJSON = trailJSON.getJSONArray(Trail.PATH_KEY);
@@ -48,7 +51,8 @@ public class Visualizer{
       int x = point.getInt(Point.POINT_X_KEY);
       int y = point.getInt(Point.POINT_Y_KEY);
       int t = point.getInt(Point.POINT_T_KEY);
-      currentHM.click(x,y); 
+      int s = point.getInt(Point.POINT_STAGE_KEY);
+      currentPath.add(new Point(x, y, t, s));
     }
     
   }
@@ -56,14 +60,23 @@ public class Visualizer{
   void draw(){
     if(!mDirtyFlag)
       return;
-    mDirtyFlag = true;
+    
+    mDirtyFlag = false;
 
     noStroke();
     pushMatrix();
     translate(WIREFRAME_UL_X, WIREFRAME_UL_Y);
     background(COLOR_WHITE);
-    if(currentHM != null)
-      currentHM.draw();
+    //if(currentHM != null)
+    //  currentHM.draw();
+
+    int duration = currentPath.get(currentPath.size()-1).t;
+    for(Point p:currentPath){
+      fill(lerpColor(COLOR_BLUE, COLOR_RED, float(p.t)/duration));
+      println(float(p.t)+" "+duration);
+      ellipse(p.x, p.y, PATH_DOT_SIZE, PATH_DOT_SIZE);
+    }
+
     popMatrix();
     
     drawWireframe();

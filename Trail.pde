@@ -21,6 +21,7 @@ public class Trail{
   int userID;
   int target;
   int startTime;
+  int duration;
   STAGE curStage;
   ArrayList<Point> path;
   
@@ -38,6 +39,7 @@ public class Trail{
     int y = (mouseY - WIREFRAME_UL_Y);
     int elapsedTime = millis() - startTime;
     updateCurStage();
+    updateDuration(elapsedTime);
     path.add(new Point(x, y, elapsedTime, this.curStage.ordinal()));
   }
   
@@ -78,6 +80,12 @@ public class Trail{
   int getCol(){
     return target%TARGET_COL_NUM;
   }
+
+  void updateDuration(int elapsedTime){
+    if(elapsedTime > this.duration)
+      duration = elapsedTime;
+    return;
+  }
 }
 
 public class Point{
@@ -86,7 +94,6 @@ public class Point{
   static final String POINT_T_KEY = "t";
   static final String POINT_STAGE_KEY = "s";
 
-  
   //t for elapsed time in milles
   int t;  
   int x, y;

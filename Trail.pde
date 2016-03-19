@@ -86,6 +86,10 @@ public class Trail{
       duration = elapsedTime;
     return;
   }
+
+  int getLastTimestamp(){
+    return path.get(path.size()-1).t;
+  }
 }
 
 public class Point{

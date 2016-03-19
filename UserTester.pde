@@ -4,7 +4,11 @@ import java.util.Random;
 public class UserTester{
   int userID=0;
   int trailNum = 0;
+  int lastTriggerTimestamp = -1;
+  int lastTriggerTarget = -1;
+  int lastTriggerTargetTTL = -1;
   Trail currentTrail;
+
   ArrayList<Integer> trailTarget = new ArrayList<Integer>();
   
   boolean isFinished = false;
@@ -48,16 +52,33 @@ public class UserTester{
     isFinished = true;
   }
   
+  //update
   void trackGazeGesture(){
     if(isGazing && currentTrail!=null){
        currentTrail.update();
     }
+
+    
+    int tmpTriggerTarget = isWithinTarget();
+    if(tmpTriggerTarget == -1){
+      lastTriggerTargetTTL -= (millis()-lastTriggerTimestamp);
+      if(lastTriggerTargetTTL<0){
+        lastTriggerTarget = -1;
+      }
+    }
+    else{
+      lastTriggerTarget = tmpTriggerTarget;
+      lastTriggerTargetTTL = HALO_BTN_DELAY_TIME;
+    }
+
+    println("lastTriggerTargetTTL:"+lastTriggerTargetTTL);
+    lastTriggerTimestamp = millis();
   }
   
+
   /*
    *  The main functions of processing 
    */
-   
   void keyPressed(){
     if(key ==' '){
       switchGazeState();

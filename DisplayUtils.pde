@@ -28,8 +28,10 @@ final int HOMEPOSITION_MARGIN = 10;
 
 final int HALO_BTN_RADIUS = 72;
 final int HALO_BTN_DIAMETER = HALO_BTN_RADIUS*2;
-final int HALO_BTN_DIST_THRESHOLD = 30;
-final int INFO_MARGIN = 300;
+final int HALO_BTN_DIST_THRESHOLD = 40;
+final int HALO_BTN_DELAY_TIME = 500;//ms
+
+final int INFO_MARGIN_X = 300;
 
 final int targetWidth = WIREFRAME_WIDTH / TARGET_COL_NUM;
 final int targetHeight = WIREFRAME_HEIGHT / TARGET_ROW_NUM;
@@ -80,10 +82,13 @@ void drawCross(int x, int y){
 }
 
 void drawHaloButton(){  
-  int r = (mouseY - WIREFRAME_UL_Y)/targetHeight;
-  int c = (mouseX - WIREFRAME_UL_X)/targetWidth;
+  //[TODO] using mUserTester.lastTriggerTarget
+  //int r = (mouseY - WIREFRAME_UL_Y)/targetHeight;
+  //int c = (mouseX - WIREFRAME_UL_X)/targetWidth;
 
-  if(isWithinTarget() && mUserTester.isGazing){
+  if(mUserTester.lastTriggerTarget!=-1 && mUserTester.isGazing){
+    int r = mUserTester.lastTriggerTarget / TARGET_COL_NUM;
+    int c = mUserTester.lastTriggerTarget % TARGET_COL_NUM;
     int margin = HALO_BTN_RADIUS/2;
 
     pushMatrix();
@@ -157,7 +162,7 @@ void drawTestingInfo(){
   textSize(32);
   fill(COLOR_BLACK);
   pushMatrix();
-  translate(WIREFRAME_UL_X+WIREFRAME_WIDTH+INFO_MARGIN, WIREFRAME_UL_Y);
+  translate(WIREFRAME_UL_X+WIREFRAME_WIDTH+INFO_MARGIN_X, WIREFRAME_UL_Y);
   
   text("Trails:"+mUserTester.trailNum+"/"+TOTAL_TRAIL_NUM, 10, 10);
    
@@ -168,7 +173,7 @@ void drawVisInfo(){
   textSize(32);
   fill(COLOR_BLACK);
   pushMatrix();
-  translate(WIREFRAME_UL_X+WIREFRAME_WIDTH+INFO_MARGIN, WIREFRAME_UL_Y);
+  translate(WIREFRAME_UL_X+WIREFRAME_WIDTH+INFO_MARGIN_X, WIREFRAME_UL_Y);
   
   text("User:"+mVisualizer.currentUserId, 10, 0);
   text("Trail:"+mVisualizer.currentTrailId, 10, 50);
@@ -187,18 +192,25 @@ boolean isWithinHomeBtn(int x, int y){
   return true;
 }
 
-boolean isWithinTarget(){
+
+/*
+ *  return val targetID, or -1 if none
+ */
+int isWithinTarget(){
   int r = (mouseY - WIREFRAME_UL_Y)/targetHeight;
   int c = (mouseX - WIREFRAME_UL_X)/targetWidth;
 
   if(mouseX<WIREFRAME_UL_X || mouseX>WIREFRAME_UL_X+WIREFRAME_WIDTH || mouseY<WIREFRAME_UL_Y || mouseY>WIREFRAME_UL_Y+WIREFRAME_HEIGHT)
-    return false;
+    return -1;
      
   int dx = mouseX - WIREFRAME_UL_X - int((c+0.5)*targetWidth);
   int dy = mouseY - WIREFRAME_UL_Y - int((r+0.5)*targetHeight);
   double distance = sqrt(dx*dx + dy*dy);
 
-  return distance < HALO_BTN_DIST_THRESHOLD;
+  if(distance < HALO_BTN_DIST_THRESHOLD)
+    return r*TARGET_COL_NUM + c;
+  else
+    return -1;
 }
 
 boolean isWithinTarget(Trail trail){

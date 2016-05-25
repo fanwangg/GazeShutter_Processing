@@ -1,5 +1,5 @@
-final int TARGET_ROW_NUM = 5;
-final int TARGET_COL_NUM = 4;
+final int TARGET_ROW_NUM = 4;
+final int TARGET_COL_NUM = 3;
 final int TRAIL_PER_TARGET = 3;
 final int TOTAL_TRAIL_NUM = TARGET_ROW_NUM * TARGET_COL_NUM * TRAIL_PER_TARGET;
 final String outputPath = new String("data/");
@@ -37,6 +37,9 @@ final int targetWidth = WIREFRAME_WIDTH / TARGET_COL_NUM;
 final int targetHeight = WIREFRAME_HEIGHT / TARGET_ROW_NUM;
 final int CROSS_SIZE = 16;
 
+final String USER_DESIGN = "USER_DESIGN";
+final String USER_NAME   = "USER_NAME";
+
 void drawWireframe(){
   noFill();
   pushMatrix();
@@ -66,12 +69,12 @@ void drawTargets(){
       if(r*TARGET_COL_NUM + c == target){
         strokeWeight(STROKE_WEIGHT*2);
         stroke(COLOR_RED);
+        drawCross(int((c+0.5)*targetWidth), int((r+0.5)*targetHeight));  
       }
       else{
         strokeWeight(STROKE_WEIGHT);
         stroke(COLOR_BLACK);
       }
-      drawCross(int((c+0.5)*targetWidth), int((r+0.5)*targetHeight));  
     }
   }
 }
@@ -80,6 +83,36 @@ void drawCross(int x, int y){
   line(x-CROSS_SIZE, y, x+CROSS_SIZE, y);
   line(x, y-CROSS_SIZE, x, y+CROSS_SIZE);
 }
+
+void drawUP(int r, int c, int margin){
+  arc(int((c+0.5)*targetWidth), -margin, 
+            HALO_BTN_DIAMETER, HALO_BTN_DIAMETER, 
+            PI/6, PI*5/6, CHORD);
+}
+
+
+void drawRIGHT(int r, int c, int margin){
+      arc(WIREFRAME_WIDTH+margin, int((r+0.5)*targetHeight), 
+          HALO_BTN_DIAMETER, HALO_BTN_DIAMETER, 
+          PI*4/6, PI*8/6, CHORD);
+}
+
+
+void drawDOWN(int r, int c, int margin){
+        arc(int((c+0.5)*targetWidth), WIREFRAME_HEIGHT+margin, 
+            HALO_BTN_DIAMETER, HALO_BTN_DIAMETER, 
+            -PI*5/6, -PI*1/6, CHORD);
+}
+
+void drawLEFT(int r, int c, int margin){
+
+        arc(-margin, int((r+0.5)*targetHeight), 
+            HALO_BTN_DIAMETER, HALO_BTN_DIAMETER, 
+            -PI*2/6, PI*2/6, CHORD); 
+}
+        
+
+
 
 void drawHaloButton(){  
   //[TODO] using mUserTester.lastTriggerTarget
@@ -96,26 +129,27 @@ void drawHaloButton(){
     fill(COLOR_HALOBTN);
 
     switch(mDesign){
+      case DOWN:
+        drawDOWN(r,c,margin);
+        break;
+        
+      case RIGHT:
+        drawRIGHT(r,c,margin);
+        break;
+        
+      case LEFT:
+        drawLEFT(r,c,margin);
+        break;
+      
+      case UP:
+        drawUP(r,c,margin);
+        break;
+      
       case DYNAMIC_4_POINT:
-        //UP
-        arc(int((c+0.5)*targetWidth), -margin, 
-            HALO_BTN_DIAMETER, HALO_BTN_DIAMETER, 
-            PI/6, PI*5/6, CHORD);
-            
-        //RIGHT
-        arc(WIREFRAME_WIDTH+margin, int((r+0.5)*targetHeight), 
-            HALO_BTN_DIAMETER, HALO_BTN_DIAMETER, 
-            PI*4/6, PI*8/6, CHORD);
-            
-        //DOWN
-        arc(int((c+0.5)*targetWidth), WIREFRAME_HEIGHT+margin, 
-            HALO_BTN_DIAMETER, HALO_BTN_DIAMETER, 
-            -PI*5/6, -PI*1/6, CHORD);
-            
-        //LEFT
-        arc(-margin, int((r+0.5)*targetHeight), 
-            HALO_BTN_DIAMETER, HALO_BTN_DIAMETER, 
-            -PI*2/6, PI*2/6, CHORD);
+        drawUP(r,c,margin);
+        drawRIGHT(r,c,margin);
+        drawLEFT(r,c,margin);
+        drawDOWN(r,c,margin);
         break;
       
       case DYNAMIC_1_POINT:
@@ -180,6 +214,34 @@ void drawVisInfo(){
   text("Task:("+mVisualizer.currentTarget/TARGET_COL_NUM+","+mVisualizer.currentTarget%TARGET_COL_NUM+")", 10, 100);
    
   popMatrix();
+}
+
+void setupPanel(){
+
+  DropdownList d1 = PilotStudy.mCP5.addDropdownList(USER_DESIGN)
+                    .setPosition(100, 100)
+                    .setSize(100,100);
+  customize(d1);   
+
+  Textfield myTextfield = PilotStudy.mCP5.addTextfield(USER_NAME)
+                    .setPosition(100, 200)
+                    .setSize(100, 40)
+                    .setFocus(true);
+
+
+}
+
+void customize(DropdownList dl) {
+  // a convenience function to customize a DropdownList
+  dl.setBackgroundColor(color(190));
+  dl.setItemHeight(30);
+  dl.setBarHeight(30);
+  for (DESIGN d:DESIGN.values()) {
+    dl.addItem(d.name(), ""+d.ordinal());
+  }
+  //ddl.scroll(0);
+  dl.setColorBackground(color(0,0,0));
+  dl.setColorActive(color(255, 128));
 }
 
 boolean isWithinHomeBtn(int x, int y){
@@ -269,8 +331,24 @@ boolean isWithinHaloButton(Trail trail){
       if(distance<HALO_BTN_DIAMETER && mx>0){
         return true;
       }
-
+ 
       break;
   }
   return false;
+}
+
+// DropdownList is of type ControlGroup.
+void controlEvent(ControlEvent event) {
+  if(event.isAssignableFrom(Textfield.class)){
+    Textfield t = (Textfield)event.getController();
+    mUserTester.userID = int(t.getText());
+    println(t.getText());
+  }
+  else if(event.isAssignableFrom(DropdownList.class)){
+    mDesign = DESIGN.values()[int(event.getController().getValue())];
+    println(event.getController()+":"+event.getController().getValue());
+  }
+  else if (event.isGroup()) {
+    println(event.getGroup()+":"+event.getGroup().getValue());
+  } 
 }

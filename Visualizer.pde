@@ -72,8 +72,10 @@ public class Visualizer{
 
     int duration = currentPath.get(currentPath.size()-1).t;
     for(Point p:currentPath){
-      fill(lerpColor(COLOR_BLUE, COLOR_RED, float(p.t)/duration));
-      ellipse(p.x, p.y, PATH_DOT_SIZE, PATH_DOT_SIZE);
+      if(p.stage != -1){
+        fill(lerpColor(COLOR_BLUE, COLOR_RED, float(p.t)/duration));
+        ellipse(p.x, p.y, PATH_DOT_SIZE, PATH_DOT_SIZE);
+      }
     }
 
     popMatrix();

@@ -1,6 +1,8 @@
+import controlP5.*;
+
 final boolean DEBUG=false;
 public enum DESIGN{
-  DYNAMIC_4_POINT, DYNAMIC_1_POINT, STATIC;
+  LEFT, UP, RIGHT, DOWN, DYNAMIC_4_POINT, DYNAMIC_1_POINT, STATIC;
 }
 public enum MODE{
   USER_TESTING, VISUALIZING;
@@ -14,6 +16,7 @@ MODE mMode;
 DESIGN mDesign;
 UserTester mUserTester;
 Visualizer mVisualizer;
+static ControlP5 mCP5;
 
 void keyPressed(){
   if(key==TAB){
@@ -34,11 +37,12 @@ void setup() {
    //frameRate(30);
    
    mMode = MODE.USER_TESTING;
-   mDesign = DESIGN.DYNAMIC_4_POINT;
+   mDesign = DESIGN.RIGHT;
    
    mUserTester = new UserTester();
    mVisualizer = new Visualizer();
-
+   mCP5 = new ControlP5(this);
+   setupPanel();
 }
 
 void draw(){

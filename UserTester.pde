@@ -3,6 +3,7 @@ import java.util.Random;
 
 public class UserTester{
   int userID=0;
+  String userName = "";
   int trailNum = 0;
   int lastTriggerTimestamp = -1;
   int lastTriggerTarget = -1;
@@ -11,10 +12,22 @@ public class UserTester{
 
   ArrayList<Integer> trailTarget = new ArrayList<Integer>();
   
-  boolean isFinished = false;
   boolean isGazing = false;
   
   public UserTester(){
+    init();
+  }
+
+  void init(){
+    userID=0;
+    trailNum = 0;
+    lastTriggerTimestamp = -1;
+    lastTriggerTarget = -1;
+    lastTriggerTargetTTL = -1;
+    trailTarget = new ArrayList<Integer>();
+  
+    isGazing = false;
+  
     for(int r=0; r<TARGET_ROW_NUM; r++){
       for(int c=0; c<TARGET_COL_NUM; c++){
         for(int t=0; t<TRAIL_PER_TARGET; t++){ 
@@ -26,9 +39,6 @@ public class UserTester{
   }
   
   void switchGazeState(){
-    if(isFinished)
-      return;
-
      isGazing = !isGazing;
      
      if(isGazing){
@@ -48,8 +58,11 @@ public class UserTester{
   }
   
   void finish(){
-    noLoop();
-    isFinished = true;
+    javax.swing.JOptionPane.showMessageDialog(null, "Finished",
+      "Info", javax.swing.JOptionPane.INFORMATION_MESSAGE); 
+    init();
+    //noLoop();
+    //isFinished = true;
   }
   
   //update
@@ -71,7 +84,7 @@ public class UserTester{
       lastTriggerTargetTTL = HALO_BTN_DELAY_TIME;
     }
 
-    println("lastTriggerTargetTTL:"+lastTriggerTargetTTL);
+//    println("lastTriggerTargetTTL:"+lastTriggerTargetTTL);
     lastTriggerTimestamp = millis();
   }
   

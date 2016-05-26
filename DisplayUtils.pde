@@ -29,7 +29,7 @@ final int HOMEPOSITION_MARGIN = 10;
 final int HALO_BTN_RADIUS = 72;
 final int HALO_BTN_DIAMETER = HALO_BTN_RADIUS*2;
 final int HALO_BTN_DIST_THRESHOLD = 40;
-final int HALO_BTN_DELAY_TIME = 500;//ms
+final int HALO_BTN_DELAY_TIME = 300;//ms
 
 final int INFO_MARGIN_X = 300;
 
@@ -39,6 +39,9 @@ final int CROSS_SIZE = 16;
 
 final String USER_DESIGN = "USER_DESIGN";
 final String USER_NAME   = "USER_NAME";
+
+DropdownList mModeDropdown;
+Textfield mUserIdText;
 
 void drawWireframe(){
   noFill();
@@ -53,16 +56,21 @@ void drawWireframe(){
   popMatrix();
 }
 
-
-void drawTargets(){
-  int target=0;
-
+int getCurrentTarget(){
+  int target;
   if(mMode == MODE.VISUALIZING)
     target = mVisualizer.currentTarget;
   else if(mUserTester.isGazing)
     target = mUserTester.trailTarget.get(mUserTester.trailNum);
   else
     target = -1;
+
+  return target;
+}
+
+
+void drawTargets(){
+  int target=getCurrentTarget();
   
   for(int r=0; r<TARGET_ROW_NUM; r++){
     for(int c=0; c<TARGET_COL_NUM; c++){
@@ -119,7 +127,10 @@ void drawHaloButton(){
   //int r = (mouseY - WIREFRAME_UL_Y)/targetHeight;
   //int c = (mouseX - WIREFRAME_UL_X)/targetWidth;
 
-  if(mUserTester.lastTriggerTarget!=-1 && mUserTester.isGazing){
+  if(mUserTester.lastTriggerTarget!=-1 
+    &&mUserTester.lastTriggerTarget==getCurrentTarget()
+    &&mUserTester.isGazing){
+
     int r = mUserTester.lastTriggerTarget / TARGET_COL_NUM;
     int c = mUserTester.lastTriggerTarget % TARGET_COL_NUM;
     int margin = HALO_BTN_RADIUS/2;
@@ -188,20 +199,34 @@ void drawHomePosition(){
   rect(UL_X, UL_Y, HOMEPOSITION_WIDTH, HOMEPOSITION_HEIGHT);
 }
 
-void drawTestingInfo(){
+void drawTestingInfo(boolean ambientMode){
   if(DEBUG){
     println("frameRate:"+frameRate);
   }
   
-  textSize(32);
-  fill(COLOR_BLACK);
-  pushMatrix();
-  translate(WIREFRAME_UL_X+WIREFRAME_WIDTH+INFO_MARGIN_X, WIREFRAME_UL_Y);
-  
-  text("Trails:"+mUserTester.trailNum+"/"+TOTAL_TRAIL_NUM, 10, 10);
-   
-  popMatrix();
+  if(ambientMode){
+    mModeDropdown.hide();
+    mUserIdText.hide();
+    float process = float(mUserTester.trailNum)/TOTAL_TRAIL_NUM;
+
+
+  }else{
+    mModeDropdown.show();
+    mUserIdText.show();
+
+    textSize(32);
+    fill(COLOR_BLACK);
+    pushMatrix();
+    translate(WIREFRAME_UL_X+WIREFRAME_WIDTH+INFO_MARGIN_X, WIREFRAME_UL_Y);
+    
+    text("User:"+mUserTester.userID, 10, 0);
+    text("Trails:"+mUserTester.trailNum+"/"+TOTAL_TRAIL_NUM, 10, 40);
+     
+    popMatrix();
+  }
 }
+
+
 
 void drawVisInfo(){
   textSize(32);
@@ -209,7 +234,7 @@ void drawVisInfo(){
   pushMatrix();
   translate(WIREFRAME_UL_X+WIREFRAME_WIDTH+INFO_MARGIN_X, WIREFRAME_UL_Y);
   
-  text("User:"+mVisualizer.currentUserId, 10, 0);
+  text("User:"+mVisualizer.users[mVisualizer.currentUserId], 10, 0);
   text("Trail:"+mVisualizer.currentTrailId, 10, 50);
   text("Task:("+mVisualizer.currentTarget/TARGET_COL_NUM+","+mVisualizer.currentTarget%TARGET_COL_NUM+")", 10, 100);
    
@@ -218,14 +243,14 @@ void drawVisInfo(){
 
 void setupPanel(){
 
-  DropdownList d1 = PilotStudy.mCP5.addDropdownList(USER_DESIGN)
+  mModeDropdown = PilotStudy.mCP5.addDropdownList(USER_DESIGN)
                     .setPosition(100, 100)
                     .setSize(100,100);
-  customize(d1);   
+  customize(mModeDropdown);   
 
-  Textfield myTextfield = PilotStudy.mCP5.addTextfield(USER_NAME)
+  mUserIdText = PilotStudy.mCP5.addTextfield(USER_NAME)
                     .setPosition(100, 200)
-                    .setSize(100, 40)
+                    .setSize(100, 20)
                     .setFocus(true);
 
 
@@ -341,7 +366,7 @@ boolean isWithinHaloButton(Trail trail){
 void controlEvent(ControlEvent event) {
   if(event.isAssignableFrom(Textfield.class)){
     Textfield t = (Textfield)event.getController();
-    mUserTester.userID = int(t.getText());
+    mUserTester.userID = int(t.getText());//[TODO] check if not int
     println(t.getText());
   }
   else if(event.isAssignableFrom(DropdownList.class)){

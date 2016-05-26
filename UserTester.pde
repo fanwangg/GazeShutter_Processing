@@ -8,6 +8,7 @@ public class UserTester{
   int lastTriggerTimestamp = -1;
   int lastTriggerTarget = -1;
   int lastTriggerTargetTTL = -1;
+  boolean mAmbientMode = false;
   Trail currentTrail;
 
   ArrayList<Integer> trailTarget = new ArrayList<Integer>();
@@ -36,6 +37,10 @@ public class UserTester{
       }
     }
     Collections.shuffle(trailTarget);
+  }
+
+  void switchAmbientMode(){
+    mAmbientMode = !mAmbientMode;
   }
   
   void switchGazeState(){
@@ -93,8 +98,11 @@ public class UserTester{
    *  The main functions of processing 
    */
   void keyPressed(){
-    if(key ==' '){
+    if(key==' '){
       switchGazeState();
+    }
+    else if(key=='`'){
+      switchAmbientMode();
     }
   }
   
@@ -103,7 +111,7 @@ public class UserTester{
     drawWireframe();
     drawHomePosition();
     drawHaloButton();
-    drawTestingInfo();
+    drawTestingInfo(mAmbientMode);
     
     //saving trail data
     trackGazeGesture();

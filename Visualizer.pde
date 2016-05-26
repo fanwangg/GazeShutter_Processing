@@ -23,9 +23,11 @@ public class Visualizer{
     //update user
     if(keyCode == UP){
       currentUserId = (currentUserId+users.length-1) % users.length;
+      currentTrailId = 0;
     }
     else if(keyCode == DOWN){
       currentUserId = (currentUserId+1) % users.length;
+      currentTrailId = 0;
     }
     trails = listFileNames(dataPath(users[currentUserId]));
     if(trails==null || trails.length==0)

@@ -31,8 +31,17 @@ public class Trail{
     this.trailID = trail;
     this.target = target; 
     this.curStage = STAGE.STAGE_0;
-    path = new ArrayList<Point>();
+    this.path = new ArrayList<Point>();
   }
+
+  Trail(JSONObject trailJSON){
+    this.userID = trailJSON.getInt(Trail.USER_KEY);
+    this.trailID = trailJSON.getInt(Trail.TRAIL_KEY);;
+    this.target = trailJSON.getInt(Trail.TARGET_KEY);
+    this.path = loadPathFromJson(trailJSON);
+  }
+
+
   
   public void update(){
     int x = (mouseX - WIREFRAME_UL_X);
@@ -89,6 +98,26 @@ public class Trail{
 
   int getLastTimestamp(){
     return path.get(path.size()-1).t;
+  }
+
+  int getDuration(){
+    return duration;
+  }
+
+  ArrayList<Point> loadPathFromJson(JSONObject trailJSON){
+    ArrayList<Point> path = new ArrayList<Point>();
+
+    JSONArray pathJSON = trailJSON.getJSONArray(Trail.PATH_KEY);
+    for (int j=0; j<pathJSON.size(); j++) {
+      JSONObject point = pathJSON.getJSONObject(j);
+      int x = point.getInt(Point.POINT_X_KEY);
+      int y = point.getInt(Point.POINT_Y_KEY);
+      int t = point.getInt(Point.POINT_T_KEY);
+      int s = point.getInt(Point.POINT_STAGE_KEY);
+      path.add(new Point(x, y, t, s));
+    }
+
+    return path;
   }
 }
 

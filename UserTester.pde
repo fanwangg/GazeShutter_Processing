@@ -2,7 +2,7 @@ import java.util.Collections;
 import java.util.Random;
 
 public class UserTester{
-  int userID=0;
+  int userID=-1;
   String userName = "";
   int trailNum = 0;
   int lastTriggerTimestamp = -1;

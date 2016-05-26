@@ -5,62 +5,85 @@ public class Visualizer{
   int currentTarget;
   boolean mDirtyFlag;
 
-  String[] users;
-  String[] trails;
+  String[] userNames;
+  String[] trailNames;
+  ArrayList<Trail> trails;
   ArrayList<Point> currentPath;
   
   public Visualizer(){
     currentUserId = 0;
     currentTrailId = 0;
     mDirtyFlag = false;
+
+    loadUsers();
+    loadTrails();
   }
  
   void keyPressed(){
-    users = listFileNames(dataPath(""));
-    if(users==null || users.length==0)
-      return;
-
     //update user
     if(keyCode == UP){
-      currentUserId = (currentUserId+users.length-1) % users.length;
-      currentTrailId = 0;
+      currentUserId = (currentUserId+userNames.length-1) % userNames.length;
+      loadTrails();
     }
     else if(keyCode == DOWN){
-      currentUserId = (currentUserId+1) % users.length;
-      currentTrailId = 0;
+      currentUserId = (currentUserId+1) % userNames.length;
+      loadTrails();
     }
-    trails = listFileNames(dataPath(users[currentUserId]));
-    if(trails==null || trails.length==0)
-        return;
-      //update trail
+
     if(keyCode == LEFT){
-      currentTrailId = (currentTrailId+trails.length-1) % trails.length;  
+      currentTrailId = (currentTrailId+trailNames.length-1) % trailNames.length;  
+      currentPath = trails.get(currentTrailId).path;
     }
     else if(keyCode == RIGHT){
-      currentTrailId = (currentTrailId+1) % trails.length;
+      currentTrailId = (currentTrailId+1) % trailNames.length;
+      currentPath = trails.get(currentTrailId).path;
     }
-    
-    
-    //update map
-    mDirtyFlag = true;
-    //currentHM = new Heatmap(new ArrayList() );
-    currentPath = new ArrayList<Point>();
-    JSONObject trailJSON = loadJSONObject(dataPath(users[currentUserId]+"/"+trails[currentTrailId]));
-    currentTarget = trailJSON.getInt(Trail.TARGET_KEY);
-    JSONArray pathJSON = trailJSON.getJSONArray(Trail.PATH_KEY);
-    for (int i = 0; i < pathJSON.size(); i++) {
-      JSONObject point = pathJSON.getJSONObject(i);
-      int x = point.getInt(Point.POINT_X_KEY);
-      int y = point.getInt(Point.POINT_Y_KEY);
-      int t = point.getInt(Point.POINT_T_KEY);
-      int s = point.getInt(Point.POINT_STAGE_KEY);
-      currentPath.add(new Point(x, y, t, s));
+  }
+
+  void loadUsers(){
+    userNames = listFileNames(dataPath(""));
+  }
+
+  void loadTrails(){
+    if(userNames==null || userNames.length==0){
+      println("qwe");
+      return; 
     }
-    
+    currentTrailId = 0;
+
+    trailNames = listFileNames(dataPath(userNames[currentUserId]));
+    trails = new ArrayList<Trail>();
+
+    for(int i=0; i<trailNames.length; i++){
+      JSONObject trailJSON = loadJSONObject(dataPath(userNames[currentUserId]+"/"+trailNames[i]));
+      trails.add(new Trail(trailJSON));
+    }
+    currentPath = trails.get(0).path;
+  }
+
+  void drawPaths(int target){
+    for(Trail t:trails){
+      if(t.target == target){
+        drawSinglePath(t.path);
+      }
+    }
+    return;
+  }
+
+  void drawSinglePath(ArrayList<Point> path){
+    for(Point p:path){
+      if(p.stage != -1){
+        fill(lerpColor(COLOR_BLUE, COLOR_RED, 1));//[TODO] add duration for lerp color
+        ellipse(p.x, p.y, PATH_DOT_SIZE, PATH_DOT_SIZE);
+      }
+    }
+    return;
   }
   
   void draw(){
-    if(!mDirtyFlag)
+    //if(!mDirtyFlag)
+    //  return;
+    if(userNames==null || userNames.length==0)
       return;
     
     mDirtyFlag = false;
@@ -71,17 +94,16 @@ public class Visualizer{
     background(COLOR_WHITE);
     //if(currentHM != null)
     //  currentHM.draw();
-
-    int duration = currentPath.get(currentPath.size()-1).t;
-    for(Point p:currentPath){
-      if(p.stage != -1){
-        fill(lerpColor(COLOR_BLUE, COLOR_RED, float(p.t)/duration));
-        ellipse(p.x, p.y, PATH_DOT_SIZE, PATH_DOT_SIZE);
-      }
-    }
-
-    popMatrix();
     
+    int tmpTriggerTarget = isWithinTarget();
+    if(tmpTriggerTarget != -1){
+      drawPaths(tmpTriggerTarget);
+    }else{
+      drawSinglePath(currentPath);
+    }
+  
+    popMatrix();
+  
     drawWireframe();
     drawHomePosition();
     drawVisInfo();

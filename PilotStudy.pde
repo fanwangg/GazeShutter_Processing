@@ -50,4 +50,6 @@ void draw(){
     mUserTester.draw();     
   else if(mMode == MODE.VISUALIZING)
     mVisualizer.draw();
+
+  //add evaluation mode here
 }

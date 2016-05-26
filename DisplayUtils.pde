@@ -234,7 +234,7 @@ void drawVisInfo(){
   pushMatrix();
   translate(WIREFRAME_UL_X+WIREFRAME_WIDTH+INFO_MARGIN_X, WIREFRAME_UL_Y);
   
-  text("User:"+mVisualizer.users[mVisualizer.currentUserId], 10, 0);
+  text("User:"+mVisualizer.userNames[mVisualizer.currentUserId], 10, 0);
   text("Trail:"+mVisualizer.currentTrailId, 10, 50);
   text("Task:("+mVisualizer.currentTarget/TARGET_COL_NUM+","+mVisualizer.currentTarget%TARGET_COL_NUM+")", 10, 100);
    

@@ -12,11 +12,12 @@ public enum MODE{
   }
 }
 
-MODE mMode;
-DESIGN mDesign;
+static MODE mMode;
+static DESIGN mDesign;
+static ControlP5 mCP5;
 UserTester mUserTester;
 Visualizer mVisualizer;
-static ControlP5 mCP5;
+
 
 void keyPressed(){
   if(key==TAB){

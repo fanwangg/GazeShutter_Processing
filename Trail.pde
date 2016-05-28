@@ -16,12 +16,14 @@ public class Trail{
   static final String TRAIL_KEY = "trailID";
   static final String TARGET_KEY = "target";
   static final String PATH_KEY = "path";
+  static final String DESIGN_KEY = "mode";
   
   int trailID;
   int userID;
   int target;
   int startTime;
   int duration;
+  DESIGN design;
   STAGE curStage;
   ArrayList<Point> path;
   
@@ -31,6 +33,8 @@ public class Trail{
     this.trailID = trail;
     this.target = target; 
     this.curStage = STAGE.STAGE_0;
+    this.design = PilotStudy.mDesign;
+
     this.path = new ArrayList<Point>();
   }
 
@@ -57,6 +61,8 @@ public class Trail{
     json.setInt(USER_KEY,  userID);
     json.setInt(TRAIL_KEY, trailID);
     json.setInt(TARGET_KEY, target);
+    json.setInt(DESIGN_KEY, design.ordinal());
+
   
     JSONArray pathJSON = new JSONArray();
     for (int i = 0; i < path.size(); i++){
@@ -69,7 +75,7 @@ public class Trail{
     }
     json.setJSONArray(PATH_KEY, pathJSON);
     
-    String fileName = new String(userID+"/"+trailID+"_"+target+".json");
+    String fileName = new String(userID+"/"+mDesign+"/"+trailID+"_"+target+".json");
     saveJSONObject(json, outputPath+fileName);
   }
 

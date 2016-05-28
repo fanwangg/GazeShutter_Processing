@@ -29,6 +29,9 @@ public class Visualizer{
       currentUserId = (currentUserId+1) % userNames.length;
       loadTrails();
     }
+    else if(key=='r'){
+      loadTrails();
+    }
 
     if(keyCode == LEFT){
       currentTrailId = (currentTrailId+trailNames.length-1) % trailNames.length;  
@@ -38,6 +41,7 @@ public class Visualizer{
       currentTrailId = (currentTrailId+1) % trailNames.length;
       currentPath = trails.get(currentTrailId).path;
     }
+
   }
 
   void loadUsers(){
@@ -46,7 +50,6 @@ public class Visualizer{
 
   void loadTrails(){
     if(userNames==null || userNames.length==0){
-      println("qwe");
       return; 
     }
     currentTrailId = 0;

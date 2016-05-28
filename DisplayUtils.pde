@@ -28,8 +28,8 @@ final int HOMEPOSITION_MARGIN = 10;
 
 final int HALO_BTN_RADIUS = 72;
 final int HALO_BTN_DIAMETER = HALO_BTN_RADIUS*2;
-final int HALO_BTN_DIST_THRESHOLD = 40;
-final int HALO_BTN_DELAY_TIME = 300;//ms
+final int HALO_BTN_DIST_THRESHOLD = 50;
+final int HALO_BTN_DELAY_TIME = 500;//ms
 
 final int INFO_MARGIN_X = 300;
 
@@ -205,15 +205,17 @@ void drawTestingInfo(boolean ambientMode){
   }
   
   if(ambientMode){
+    noCursor();
     mModeDropdown.hide();
     mUserIdText.hide();
     float process = float(mUserTester.trailNum)/TOTAL_TRAIL_NUM;
 
 
   }else{
+    cursor(HAND);
     mModeDropdown.show();
     mUserIdText.show();
-
+  }
     textSize(32);
     fill(COLOR_BLACK);
     pushMatrix();
@@ -223,7 +225,7 @@ void drawTestingInfo(boolean ambientMode){
     text("Trails:"+mUserTester.trailNum+"/"+TOTAL_TRAIL_NUM, 10, 40);
      
     popMatrix();
-  }
+  
 }
 
 
@@ -324,7 +326,7 @@ boolean isWithinHaloButton(Trail trail){
   int margin = HALO_BTN_RADIUS/2;
   double distance;
   switch(mDesign){
-    case DYNAMIC_4_POINT:
+    case UP:
       //UP
       dx = mx - int((c+0.5)*targetWidth);
       dy = my - (-margin);
@@ -332,7 +334,10 @@ boolean isWithinHaloButton(Trail trail){
       if(distance<HALO_BTN_DIAMETER && my>0){
         return true;
       }
-
+      break;
+    
+    
+    case RIGHT: 
       //RIGHT
       dx = mx - (WIREFRAME_WIDTH+margin);
       dy = my - int((r+0.5)*targetHeight);
@@ -340,7 +345,9 @@ boolean isWithinHaloButton(Trail trail){
       if(distance<HALO_BTN_DIAMETER && mx<WIREFRAME_WIDTH){
         return true;
       }
-
+      break;
+    
+    case DOWN:       
       //DOWN
       dx = mx - int((c+0.5)*targetWidth);
       dy = my - (WIREFRAME_HEIGHT+margin);
@@ -348,7 +355,9 @@ boolean isWithinHaloButton(Trail trail){
       if(distance<HALO_BTN_DIAMETER && my<WIREFRAME_HEIGHT){
         return true;
       }
-          
+      break;
+      
+    case LEFT:
       //LEFT
       dx = mx - (-margin);
       dy = my - int((r+0.5)*targetHeight);
@@ -357,6 +366,9 @@ boolean isWithinHaloButton(Trail trail){
         return true;
       }
  
+      break;  
+    
+    case DYNAMIC_4_POINT:
       break;
   }
   return false;

@@ -1,7 +1,6 @@
 public class Visualizer{
-  final int PATH_DOT_SIZE = 20;
+  final int PATH_DOT_SIZE = 10;
   int currentUserId;
-  int currentTrailId;
   int currentTarget;
   boolean mDirtyFlag;
 
@@ -12,56 +11,68 @@ public class Visualizer{
   
   public Visualizer(){
     currentUserId = 0;
-    currentTrailId = 0;
     mDirtyFlag = false;
+    currentPath = null;
 
     loadUsers();
-    loadTrails();
   }
  
   void keyPressed(){
     //update user
     if(keyCode == UP){
-      currentUserId = (currentUserId+userNames.length-1) % userNames.length;
+      PilotStudy.mDesign = DESIGN.UP;
       loadTrails();
-    }
-    else if(keyCode == DOWN){
+    }else if(keyCode == DOWN){
+      PilotStudy.mDesign = DESIGN.DOWN;
+      loadTrails();
+    }else if(keyCode == LEFT){
+      PilotStudy.mDesign = DESIGN.LEFT;
+      loadTrails();
+    }else if(keyCode == RIGHT){
+      PilotStudy.mDesign = DESIGN.RIGHT;
+      loadTrails();
+    }else if(key==' '){
       currentUserId = (currentUserId+1) % userNames.length;
-      loadTrails();
-    }
-    else if(key=='r'){
-      loadTrails();
-    }
-
-    if(keyCode == LEFT){
-      currentTrailId = (currentTrailId+trailNames.length-1) % trailNames.length;  
-      currentPath = trails.get(currentTrailId).path;
-    }
-    else if(keyCode == RIGHT){
-      currentTrailId = (currentTrailId+1) % trailNames.length;
-      currentPath = trails.get(currentTrailId).path;
+    }else if(key==BACKSPACE){
+      currentUserId = (currentUserId+userNames.length-1) % userNames.length;
+    }else if(key=='r'){
+      loadUsers();
     }
 
+    currentUserId = (currentUserId+userNames.length-1) % userNames.length;
   }
 
   void loadUsers(){
     userNames = listFileNames(dataPath(""));
+    if(userNames==null || userNames.length==0){
+      noDataPopout();
+      return; 
+    }
+    loadTrails();
   }
 
   void loadTrails(){
-    if(userNames==null || userNames.length==0){
+    trailNames = listFileNames(dataPath(userNames[currentUserId]));
+
+    if(trailNames==null || trailNames.length==0){
+      noDataPopout();
       return; 
     }
-    currentTrailId = 0;
 
-    trailNames = listFileNames(dataPath(userNames[currentUserId]));
     trails = new ArrayList<Trail>();
-
     for(int i=0; i<trailNames.length; i++){
       JSONObject trailJSON = loadJSONObject(dataPath(userNames[currentUserId]+"/"+trailNames[i]));
-      trails.add(new Trail(trailJSON));
+      Trail t = new Trail(trailJSON);
+      if(t.design == PilotStudy.mDesign){
+        trails.add(t);
+      }
     }
-    currentPath = trails.get(0).path;
+  }
+  void drawPaths(){
+    for(Trail t:trails){
+        drawSinglePath(t.path);
+    }
+    return;
   }
 
   void drawPaths(int target){
@@ -86,11 +97,8 @@ public class Visualizer{
   void draw(){
     //if(!mDirtyFlag)
     //  return;
-    if(userNames==null || userNames.length==0)
-      return;
-    
+  
     mDirtyFlag = false;
-
     noStroke();
     pushMatrix();
     translate(WIREFRAME_UL_X, WIREFRAME_UL_Y);
@@ -98,12 +106,12 @@ public class Visualizer{
     //if(currentHM != null)
     //  currentHM.draw();
     
-    int tmpTriggerTarget = isWithinTarget();
-    if(tmpTriggerTarget != -1){
-      drawPaths(tmpTriggerTarget);
-    }else{
-      drawSinglePath(currentPath);
-    }
+    //int tmpTriggerTarget = isWithinTarget();
+    //if(tmpTriggerTarget != -1){
+    //  drawPaths(tmpTriggerTarget);
+    //}else if(currentPath!=null){
+      drawPaths();
+    //}
   
     popMatrix();
   

@@ -16,7 +16,9 @@ public class Trail{
   static final String TRAIL_KEY = "trailID";
   static final String TARGET_KEY = "target";
   static final String PATH_KEY = "path";
-  static final String DESIGN_KEY = "mode";
+  static final String DESIGN_KEY = "design";
+  static final String DURATION_KEY = "duration";
+
   
   int trailID;
   int userID;
@@ -24,7 +26,7 @@ public class Trail{
   int startTime;
   int duration;
   DESIGN design;
-  STAGE curStage;
+  STAGE stage;
   ArrayList<Point> path;
   
   Trail(int user, int trail, int target){
@@ -32,7 +34,7 @@ public class Trail{
     this.userID = user;
     this.trailID = trail;
     this.target = target; 
-    this.curStage = STAGE.STAGE_0;
+    this.stage = STAGE.STAGE_0;
     this.design = PilotStudy.mDesign;
 
     this.path = new ArrayList<Point>();
@@ -42,18 +44,18 @@ public class Trail{
     this.userID = trailJSON.getInt(Trail.USER_KEY);
     this.trailID = trailJSON.getInt(Trail.TRAIL_KEY);;
     this.target = trailJSON.getInt(Trail.TARGET_KEY);
+    this.design = DESIGN.valueOf(trailJSON.getString(Trail.DESIGN_KEY));
     this.path = loadPathFromJson(trailJSON);
   }
 
 
-  
   public void update(){
     int x = (mouseX - WIREFRAME_UL_X);
     int y = (mouseY - WIREFRAME_UL_Y);
     int elapsedTime = millis() - startTime;
-    updateCurStage();
+    updateStage();
     updateDuration(elapsedTime);
-    path.add(new Point(x, y, elapsedTime, this.curStage.ordinal()));
+    path.add(new Point(x, y, elapsedTime, this.stage.ordinal()));
   }
   
   public void output(){
@@ -61,8 +63,8 @@ public class Trail{
     json.setInt(USER_KEY,  userID);
     json.setInt(TRAIL_KEY, trailID);
     json.setInt(TARGET_KEY, target);
-    json.setInt(DESIGN_KEY, design.ordinal());
-
+    json.setInt(DURATION_KEY, duration);
+    json.setString(DESIGN_KEY, design.name());
   
     JSONArray pathJSON = new JSONArray();
     for (int i = 0; i < path.size(); i++){
@@ -75,17 +77,17 @@ public class Trail{
     }
     json.setJSONArray(PATH_KEY, pathJSON);
     
-    String fileName = new String(userID+"/"+mDesign+"/"+trailID+"_"+target+".json");
+    String fileName = new String(userID+"/"+mDesign+"_"+trailID+"_"+target+".json");
     saveJSONObject(json, outputPath+fileName);
   }
 
-  void updateCurStage(){
-    if(curStage==STAGE.STAGE_0 && isWithinTarget(this))
-      curStage=STAGE.STAGE_1;
-    else if(curStage==STAGE.STAGE_1 && isWithinHaloButton(this))
-      curStage=STAGE.STAGE_2;
-    else if(curStage==STAGE.STAGE_2 && isWithinTarget(this))
-      curStage=STAGE.STAGE_3;
+  void updateStage(){
+    if(stage==STAGE.STAGE_0 && isWithinTarget(this))
+      stage=STAGE.STAGE_1;
+    else if(stage==STAGE.STAGE_1 && isWithinHaloButton(this))
+      stage=STAGE.STAGE_2;
+    else if(stage==STAGE.STAGE_2 && isWithinTarget(this))
+      stage=STAGE.STAGE_3;
   }
 
   int getRow(){

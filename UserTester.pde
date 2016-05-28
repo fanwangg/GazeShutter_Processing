@@ -9,7 +9,7 @@ public class UserTester{
   int lastTriggerTarget = -1;
   int lastTriggerTargetTTL = -1;
   boolean mAmbientMode = false;
-  Trail currentTrail;
+  Trail currentTrail = null;
 
   ArrayList<Integer> trailTarget = new ArrayList<Integer>();
   

@@ -127,9 +127,11 @@ void drawHaloButton(){
   //int r = (mouseY - WIREFRAME_UL_Y)/targetHeight;
   //int c = (mouseX - WIREFRAME_UL_X)/targetWidth;
 
-  if(mUserTester.lastTriggerTarget!=-1 
-    &&mUserTester.lastTriggerTarget==getCurrentTarget()
-    &&mUserTester.isGazing){
+  if((mUserTester.currentTrail!=null && mUserTester.currentTrail.stage == STAGE.STAGE_1)
+    ||(mUserTester.currentTrail!=null && mUserTester.currentTrail.stage == STAGE.STAGE_2)
+    || (mUserTester.lastTriggerTarget!=-1 
+        &&mUserTester.lastTriggerTarget==getCurrentTarget()
+        &&mUserTester.isGazing)){
 
     int r = mUserTester.lastTriggerTarget / TARGET_COL_NUM;
     int c = mUserTester.lastTriggerTarget % TARGET_COL_NUM;
@@ -237,7 +239,7 @@ void drawVisInfo(){
   translate(WIREFRAME_UL_X+WIREFRAME_WIDTH+INFO_MARGIN_X, WIREFRAME_UL_Y);
   
   text("User:"+mVisualizer.userNames[mVisualizer.currentUserId], 10, 0);
-  text("Trail:"+mVisualizer.currentTrailId, 10, 50);
+  text("DESIGN:"+PilotStudy.mDesign, 10, 50);
   text("Task:("+mVisualizer.currentTarget/TARGET_COL_NUM+","+mVisualizer.currentTarget%TARGET_COL_NUM+")", 10, 100);
    
   popMatrix();
@@ -388,4 +390,10 @@ void controlEvent(ControlEvent event) {
   else if (event.isGroup()) {
     println(event.getGroup()+":"+event.getGroup().getValue());
   } 
+}
+
+void noDataPopout(){
+  javax.swing.JOptionPane.showMessageDialog(null, "No data",
+    "Info", javax.swing.JOptionPane.INFORMATION_MESSAGE); 
+  noLoop();
 }

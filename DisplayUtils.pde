@@ -304,18 +304,21 @@ int isWithinTarget(){
     return -1;
 }
 
-boolean isWithinTarget(Trail trail){
+int isWithinTarget(Trail trail){
   int r = trail.getRow();
   int c = trail.getCol();
 
   if(mouseX<WIREFRAME_UL_X || mouseX>WIREFRAME_UL_X+WIREFRAME_WIDTH || mouseY<WIREFRAME_UL_Y || mouseY>WIREFRAME_UL_Y+WIREFRAME_HEIGHT)
-    return false;
+    return -1;
      
   int dx = mouseX - WIREFRAME_UL_X - int((c+0.5)*targetWidth);
   int dy = mouseY - WIREFRAME_UL_Y - int((r+0.5)*targetHeight);
   double distance = sqrt(dx*dx + dy*dy);
 
-  return distance < HALO_BTN_DIST_THRESHOLD;
+  if(distance < HALO_BTN_DIST_THRESHOLD)
+    return r*TARGET_COL_NUM + c;
+  else
+    return -1;
 }
 
 boolean isWithinHaloButton(Trail trail){

@@ -52,8 +52,10 @@ public class UserTester{
      }
      else{
       //just in case
-      if(currentTrail!=null)
+      if(currentTrail!=null){
         currentTrail.output();
+        currentTrail = null;
+      }
        
        trailNum++;
        if(trailNum == TOTAL_TRAIL_NUM){
@@ -72,12 +74,11 @@ public class UserTester{
   
   //update
   void trackGazeGesture(){
-    if(isGazing && currentTrail!=null){
-       currentTrail.update();
+    if(!isGazing){
+      return;
     }
-
-    
-    int tmpTriggerTarget = isWithinTarget();
+    currentTrail.update();  
+    int tmpTriggerTarget = isWithinTarget(currentTrail);
     if(tmpTriggerTarget == -1){
       lastTriggerTargetTTL -= (millis()-lastTriggerTimestamp);
       if(lastTriggerTargetTTL<0){

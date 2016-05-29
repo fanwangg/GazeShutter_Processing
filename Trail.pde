@@ -82,11 +82,11 @@ public class Trail{
   }
 
   void updateStage(){
-    if(stage==STAGE.STAGE_0 && isWithinTarget(this))
+    if(stage==STAGE.STAGE_0 && isWithinTarget(this)!=-1)
       stage=STAGE.STAGE_1;
     else if(stage==STAGE.STAGE_1 && isWithinHaloButton(this))
       stage=STAGE.STAGE_2;
-    else if(stage==STAGE.STAGE_2 && isWithinTarget(this))
+    else if(stage==STAGE.STAGE_2 && isWithinTarget(this)!=-1)
       stage=STAGE.STAGE_3;
   }
 

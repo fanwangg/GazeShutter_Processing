@@ -128,13 +128,15 @@ void drawHaloButton(){
   //int c = (mouseX - WIREFRAME_UL_X)/targetWidth;
 
   if((mUserTester.currentTrail!=null && mUserTester.currentTrail.stage == STAGE.STAGE_1)
-    ||(mUserTester.currentTrail!=null && mUserTester.currentTrail.stage == STAGE.STAGE_2)
-    || (mUserTester.lastTriggerTarget!=-1 
-        &&mUserTester.lastTriggerTarget==getCurrentTarget()
-        &&mUserTester.isGazing)){
+    ||(mUserTester.currentTrail!=null && mUserTester.currentTrail.stage == STAGE.STAGE_2)){
+    //|| (mUserTester.lastTriggerTarget!=-1 
+    //    &&mUserTester.lastTriggerTarget==getCurrentTarget()
+    //    &&mUserTester.isGazing))
 
-    int r = mUserTester.lastTriggerTarget / TARGET_COL_NUM;
-    int c = mUserTester.lastTriggerTarget % TARGET_COL_NUM;
+    //int r = mUserTester.lastTriggerTarget / TARGET_COL_NUM;
+    //int c = mUserTester.lastTriggerTarget % TARGET_COL_NUM;
+    int r = mUserTester.currentTrail.getRow();
+    int c = mUserTester.currentTrail.getCol();
     int margin = HALO_BTN_RADIUS/2;
 
     pushMatrix();

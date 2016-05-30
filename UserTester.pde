@@ -78,7 +78,6 @@ public class UserTester{
       return;
     }
 
-    println("stage:"+currentTrail.stage);
     currentTrail.update();  
     int tmpTriggerTarget = isWithinTarget(currentTrail);
     if(tmpTriggerTarget == -1){

@@ -338,7 +338,7 @@ boolean isWithinHaloButton(Trail trail){
       dx = mx - int((c+0.5)*targetWidth);
       dy = my - (-margin);
       distance = sqrt(dx*dx + dy*dy);
-      if(distance<HALO_BTN_DIAMETER && my>0){
+      if(distance<HALO_BTN_RADIUS && my>0){
         return true;
       }
       break;
@@ -349,7 +349,7 @@ boolean isWithinHaloButton(Trail trail){
       dx = mx - (WIREFRAME_WIDTH+margin);
       dy = my - int((r+0.5)*targetHeight);
       distance = sqrt(dx*dx + dy*dy);
-      if(distance<HALO_BTN_DIAMETER && mx<WIREFRAME_WIDTH){
+      if(distance<HALO_BTN_RADIUS && mx<WIREFRAME_WIDTH){
         return true;
       }
       break;
@@ -359,7 +359,7 @@ boolean isWithinHaloButton(Trail trail){
       dx = mx - int((c+0.5)*targetWidth);
       dy = my - (WIREFRAME_HEIGHT+margin);
       distance = sqrt(dx*dx + dy*dy);
-      if(distance<HALO_BTN_DIAMETER && my<WIREFRAME_HEIGHT){
+      if(distance<HALO_BTN_RADIUS && my<WIREFRAME_HEIGHT){
         return true;
       }
       break;
@@ -369,7 +369,7 @@ boolean isWithinHaloButton(Trail trail){
       dx = mx - (-margin);
       dy = my - int((r+0.5)*targetHeight);
       distance = sqrt(dx*dx + dy*dy);
-      if(distance<HALO_BTN_DIAMETER && mx>0){
+      if(distance<HALO_BTN_RADIUS && mx>0){
         return true;
       }
  

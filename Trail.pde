@@ -1,5 +1,5 @@
 public enum STAGE{
-  STAGE_0, STAGE_1, STAGE_2, STAGE_3;
+  STAGE_0, STAGE_1, STAGE_2, STAGE_3, STAGE_4, STAGE_5, STAGE_6;
 
   private static STAGE[] stages = values();
   public STAGE next(){  
@@ -27,6 +27,7 @@ public class Trail{
   int duration;
   DESIGN design;
   STAGE stage;
+  STAGE prevStage;
   ArrayList<Point> path;
   
   Trail(int user, int trail, int target){
@@ -35,6 +36,7 @@ public class Trail{
     this.trailID = trail;
     this.target = target; 
     this.stage = STAGE.STAGE_0;
+    this.prevStage = STAGE.STAGE_0;
     this.design = PilotStudy.mDesign;
 
     this.path = new ArrayList<Point>();
@@ -82,12 +84,18 @@ public class Trail{
   }
 
   void updateStage(){
-    if(stage==STAGE.STAGE_0 && isWithinTarget(this) !=-1)
-      stage=STAGE.STAGE_1;
-    else if(stage==STAGE.STAGE_1 && isWithinHaloButton(this))
-      stage=STAGE.STAGE_2;
-    else if(stage==STAGE.STAGE_2 && isWithinTarget(this)!=-1)
-      stage=STAGE.STAGE_3;
+    if(stage==STAGE.STAGE_0 && isWithinTarget(this))
+      stage = STAGE.STAGE_1;
+    else if(stage==STAGE.STAGE_1 && !isWithinTarget(this))
+      stage = STAGE.STAGE_2;
+    else if(stage==STAGE.STAGE_2 && isWithinHaloButton(this))
+      stage = STAGE.STAGE_3;
+    else if(stage==STAGE.STAGE_3 && !isWithinHaloButton(this))
+      stage=STAGE.STAGE_4;
+    else if(stage==STAGE.STAGE_4 && isWithinTarget(this))
+      stage=STAGE.STAGE_5;
+    else if(stage==STAGE.STAGE_5 && !isWithinTarget(this))
+      stage=STAGE.STAGE_6;
   }
 
   int getRow(){

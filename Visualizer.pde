@@ -39,7 +39,6 @@ public class Visualizer{
       loadUsers();
     }
 
-    currentUserId = (currentUserId+userNames.length-1) % userNames.length;
   }
 
   void loadUsers(){
@@ -106,12 +105,12 @@ public class Visualizer{
     //if(currentHM != null)
     //  currentHM.draw();
     
-    //int tmpTriggerTarget = isWithinTarget();
-    //if(tmpTriggerTarget != -1){
-    //  drawPaths(tmpTriggerTarget);
-    //}else if(currentPath!=null){
+    int tmpTriggerTarget = withinTarget();
+    if(tmpTriggerTarget != -1){
+      drawPaths(tmpTriggerTarget);
+    }else{
       drawPaths();
-    //}
+    }
   
     popMatrix();
   

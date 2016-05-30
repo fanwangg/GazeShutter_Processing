@@ -2,9 +2,9 @@ import java.util.Collections;
 import java.util.Random;
 
 public class UserTester{
-  int userID=-1;
+  int userID;
   String userName = "";
-  int trailNum = 0;
+  int trailNum;
   int lastTriggerTimestamp = -1;
   int lastTriggerTarget = -1;
   int lastTriggerTargetTTL = -1;
@@ -20,7 +20,7 @@ public class UserTester{
   }
 
   void init(){
-    userID=0;
+    userID=-1;
     trailNum = 0;
     lastTriggerTimestamp = -1;
     lastTriggerTarget = -1;
@@ -79,7 +79,7 @@ public class UserTester{
     }
 
     currentTrail.update();  
-    int tmpTriggerTarget = isWithinTarget(currentTrail);
+    int tmpTriggerTarget = withinTarget(currentTrail);
     if(tmpTriggerTarget == -1){
       lastTriggerTargetTTL -= (millis()-lastTriggerTimestamp);
       if(lastTriggerTargetTTL<0){

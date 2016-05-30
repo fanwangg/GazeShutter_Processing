@@ -11,7 +11,9 @@ final color COLOR_RED = color(255,0,0);
 final color COLOR_GREEN = color(0,255,0);
 final color COLOR_BLUE = color(0,0,255);
 final color COLOR_LIGHTBLUE = color(30,177,237);
-final color COLOR_HALOBTN = COLOR_LIGHTBLUE;
+final color COLOR_HALOBTN_BEFORE = color(255,48,48);
+final color COLOR_HALOBTN_AFTER  = color(173,255,47);
+
 
 final int STROKE_WEIGHT = 2;
 final int SCREEN_WIDTH = 1920;//deal with width/height init. problem
@@ -127,8 +129,11 @@ void drawHaloButton(){
   //int r = (mouseY - WIREFRAME_UL_Y)/targetHeight;
   //int c = (mouseX - WIREFRAME_UL_X)/targetWidth;
 
-  if((mUserTester.currentTrail!=null && mUserTester.currentTrail.stage == STAGE.STAGE_1)
-    ||(mUserTester.currentTrail!=null && mUserTester.currentTrail.stage == STAGE.STAGE_2)){
+  if(mUserTester.currentTrail==null)
+    return;
+
+  if(STAGE.STAGE_0.ordinal() < mUserTester.currentTrail.stage.ordinal()
+    && mUserTester.currentTrail.stage.ordinal() < STAGE.STAGE_5.ordinal()) {
     //|| (mUserTester.lastTriggerTarget!=-1 
     //    &&mUserTester.lastTriggerTarget==getCurrentTarget()
     //    &&mUserTester.isGazing))
@@ -141,7 +146,12 @@ void drawHaloButton(){
 
     pushMatrix();
     translate(WIREFRAME_UL_X, WIREFRAME_UL_Y);
-    fill(COLOR_HALOBTN);
+    
+    if(mUserTester.currentTrail.stage.ordinal() < STAGE.STAGE_3.ordinal())
+      fill(COLOR_HALOBTN_BEFORE);
+    else
+      fill(COLOR_HALOBTN_AFTER);
+
 
     switch(mDesign){
       case DOWN:
@@ -289,7 +299,7 @@ boolean isWithinHomeBtn(int x, int y){
 /*
  *  return val targetID, or -1 if none
  */
-int isWithinTarget(){
+int withinTarget(){
   int r = (mouseY - WIREFRAME_UL_Y)/targetHeight;
   int c = (mouseX - WIREFRAME_UL_X)/targetWidth;
 
@@ -306,7 +316,7 @@ int isWithinTarget(){
     return -1;
 }
 
-int isWithinTarget(Trail trail){
+int withinTarget(Trail trail){
   int r = trail.getRow();
   int c = trail.getCol();
 
@@ -321,6 +331,20 @@ int isWithinTarget(Trail trail){
     return r*TARGET_COL_NUM + c;
   else
     return -1;
+}
+
+boolean isWithinTarget(){
+  if(withinTarget()==-1)
+    return false;
+  else
+    return true;
+}
+
+boolean isWithinTarget(Trail trail){
+  if(withinTarget(trail)==-1)
+    return false;
+  else
+    return true;
 }
 
 boolean isWithinHaloButton(Trail trail){

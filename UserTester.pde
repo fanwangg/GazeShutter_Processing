@@ -2,7 +2,7 @@ import java.util.Collections;
 import java.util.Random;
 
 public class UserTester{
-  int userID;
+  int userID=-1;
   String userName = "";
   int trailNum;
   int lastTriggerTimestamp = -1;
@@ -20,7 +20,6 @@ public class UserTester{
   }
 
   void init(){
-    userID=-1;
     trailNum = 0;
     lastTriggerTimestamp = -1;
     lastTriggerTarget = -1;
@@ -62,6 +61,14 @@ public class UserTester{
          finish();
        }
      }
+  }
+
+  void redoTrail(){
+    if(isGazing){
+      //starting of new trail
+      currentTrail = new Trail(userID, trailNum, trailTarget.get(trailNum));
+     }
+     isGazing = false;
   }
   
   void finish(){
@@ -105,6 +112,9 @@ public class UserTester{
     }
     else if(key=='`'){
       switchAmbientMode();
+    }
+    else if(key=='r'){
+      redoTrail();
     }
   }
   

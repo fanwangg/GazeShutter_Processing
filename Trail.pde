@@ -46,8 +46,10 @@ public class Trail{
     this.userID = trailJSON.getInt(Trail.USER_KEY);
     this.trailID = trailJSON.getInt(Trail.TRAIL_KEY);;
     this.target = trailJSON.getInt(Trail.TARGET_KEY);
+    this.duration = trailJSON.getInt(Trail.DURATION_KEY);
     this.design = DESIGN.valueOf(trailJSON.getString(Trail.DESIGN_KEY));
     this.path = loadPathFromJson(trailJSON);
+
   }
 
 

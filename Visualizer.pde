@@ -1,5 +1,5 @@
 public class Visualizer{
-  final int PATH_DOT_SIZE = 10;
+  final int PATH_DOT_SIZE = 5;
   int currentUserId;
   int currentTarget;
   boolean mDirtyFlag;
@@ -69,7 +69,7 @@ public class Visualizer{
   }
   void drawPaths(){
     for(Trail t:trails){
-        drawSinglePath(t.path);
+        drawSinglePath(t);
     }
     return;
   }
@@ -77,18 +77,25 @@ public class Visualizer{
   void drawPaths(int target){
     for(Trail t:trails){
       if(t.target == target){
-        drawSinglePath(t.path);
+        drawSinglePath(t);
       }
     }
     return;
   }
 
-  void drawSinglePath(ArrayList<Point> path){
-    for(Point p:path){
+  void drawSinglePath(Trail trail){
+    Point prevPoint = null;
+    for(Point p:trail.path){
       if(p.stage != -1){
-        fill(lerpColor(COLOR_BLUE, COLOR_RED, 1));//[TODO] add duration for lerp color
+        fill(lerpColor(COLOR_BLUE, COLOR_RED, ((float)p.t)/trail.duration));//[TODO] add duration for lerp color
         ellipse(p.x, p.y, PATH_DOT_SIZE, PATH_DOT_SIZE);
       }
+
+      if(prevPoint != null){
+        stroke(lerpColor(COLOR_BLUE, COLOR_RED, ((float)p.t)/trail.duration));
+        line(p.x, p.y, prevPoint.x, prevPoint.y);
+      }
+      prevPoint = p;
     }
     return;
   }

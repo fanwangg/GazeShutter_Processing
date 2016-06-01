@@ -5,11 +5,15 @@ public enum DESIGN{
   LEFT, UP, RIGHT, DOWN, DYNAMIC_4_POINT, DYNAMIC_1_POINT, STATIC;
 }
 public enum MODE{
-  USER_TESTING, VISUALIZING;
+  USER_TESTING, VISUALIZING, EVALUATION;
   private static MODE[] modes = values();
   public MODE next(){
     return modes[(this.ordinal()+1) % modes.length];
   }
+}
+
+public enum DISTANCE{
+  S, M, L, XL, ERR;
 }
 
 static MODE mMode;
@@ -17,6 +21,7 @@ static DESIGN mDesign;
 static ControlP5 mCP5;
 UserTester mUserTester;
 Visualizer mVisualizer;
+Evaluation mEvaluation;
 
 
 void keyPressed(){
@@ -30,6 +35,8 @@ void keyPressed(){
     mUserTester.keyPressed();
   else if(mMode == MODE.VISUALIZING)
     mVisualizer.keyPressed();
+  else if(mMode == MODE.EVALUATION)
+    mEvaluation.keyPressed();
 }
 
 void setup() {
@@ -42,6 +49,7 @@ void setup() {
    
    mUserTester = new UserTester();
    mVisualizer = new Visualizer();
+   mEvaluation = new Evaluation();
    mCP5 = new ControlP5(this);
    setupPanel();
 }
@@ -51,6 +59,8 @@ void draw(){
     mUserTester.draw();     
   else if(mMode == MODE.VISUALIZING)
     mVisualizer.draw();
+  else if(mMode == MODE.EVALUATION)
+    mEvaluation.draw();
 
   //add evaluation mode here
 }

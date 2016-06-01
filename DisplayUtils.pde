@@ -1,5 +1,5 @@
-final int TARGET_ROW_NUM = 4;
-final int TARGET_COL_NUM = 3;
+static final int TARGET_ROW_NUM = 4;
+static final int TARGET_COL_NUM = 3;
 final int TRAIL_PER_TARGET = 3;
 final int TOTAL_TRAIL_NUM = TARGET_ROW_NUM * TARGET_COL_NUM * TRAIL_PER_TARGET;
 final String outputPath = new String("data/");
@@ -18,8 +18,8 @@ final color COLOR_HALOBTN_AFTER  = color(173,255,47);
 final int STROKE_WEIGHT = 2;
 final int SCREEN_WIDTH = 1920;//deal with width/height init. problem
 final int SCREEN_HEIGHT = 1080;
-final int WIREFRAME_WIDTH  = 720;//660
-final int WIREFRAME_HEIGHT = 960;//896
+final int WIREFRAME_WIDTH  = 660;
+final int WIREFRAME_HEIGHT = 896;
 final int WIREFRAME_RADIUS = 18;
 final int WIREFRAME_UL_X = (SCREEN_WIDTH - WIREFRAME_WIDTH)/2;
 final int WIREFRAME_UL_Y = (SCREEN_HEIGHT - WIREFRAME_HEIGHT)/2;
@@ -39,6 +39,9 @@ final int targetWidth = WIREFRAME_WIDTH / TARGET_COL_NUM;
 final int targetHeight = WIREFRAME_HEIGHT / TARGET_ROW_NUM;
 final int CROSS_SIZE = 16;
 
+
+final float DWELL_TIME = 1000;//ms
+final int DWELL_PROGRESS_SIZE = 72;
 final String USER_DESIGN = "USER_DESIGN";
 final String USER_NAME   = "USER_NAME";
 
@@ -120,10 +123,7 @@ void drawLEFT(int r, int c, int margin){
             HALO_BTN_DIAMETER, HALO_BTN_DIAMETER, 
             -PI*2/6, PI*2/6, CHORD); 
 }
-        
-
-
-
+      
 void drawHaloButton(){  
   //[TODO] using mUserTester.lastTriggerTarget
   //int r = (mouseY - WIREFRAME_UL_Y)/targetHeight;
@@ -237,9 +237,8 @@ void drawTestingInfo(boolean ambientMode){
     
     text("User:"+mUserTester.userID, 10, 0);
     text("Trails:"+mUserTester.trailNum+"/"+TOTAL_TRAIL_NUM, 10, 40);
-     
+    text("Design:"+PilotStudy.mDesign.name(), 10, 80);
     popMatrix();
-  
 }
 
 
@@ -268,8 +267,6 @@ void setupPanel(){
                     .setPosition(100, 200)
                     .setSize(100, 20)
                     .setFocus(true);
-
-
 }
 
 void customize(DropdownList dl) {
@@ -362,7 +359,7 @@ boolean isWithinHaloButton(Trail trail){
       dx = mx - int((c+0.5)*targetWidth);
       dy = my - (-margin);
       distance = sqrt(dx*dx + dy*dy);
-      if(distance<HALO_BTN_RADIUS && my>0){
+      if(distance<HALO_BTN_RADIUS){//&& my>0
         return true;
       }
       break;
@@ -373,7 +370,7 @@ boolean isWithinHaloButton(Trail trail){
       dx = mx - (WIREFRAME_WIDTH+margin);
       dy = my - int((r+0.5)*targetHeight);
       distance = sqrt(dx*dx + dy*dy);
-      if(distance<HALO_BTN_RADIUS && mx<WIREFRAME_WIDTH){
+      if(distance<HALO_BTN_RADIUS){// && mx<WIREFRAME_WIDTH
         return true;
       }
       break;
@@ -383,7 +380,7 @@ boolean isWithinHaloButton(Trail trail){
       dx = mx - int((c+0.5)*targetWidth);
       dy = my - (WIREFRAME_HEIGHT+margin);
       distance = sqrt(dx*dx + dy*dy);
-      if(distance<HALO_BTN_RADIUS && my<WIREFRAME_HEIGHT){
+      if(distance<HALO_BTN_RADIUS){// && my<WIREFRAME_HEIGHT
         return true;
       }
       break;
@@ -393,7 +390,7 @@ boolean isWithinHaloButton(Trail trail){
       dx = mx - (-margin);
       dy = my - int((r+0.5)*targetHeight);
       distance = sqrt(dx*dx + dy*dy);
-      if(distance<HALO_BTN_RADIUS && mx>0){
+      if(distance<HALO_BTN_RADIUS){// && mx>0
         return true;
       }
  
@@ -405,12 +402,22 @@ boolean isWithinHaloButton(Trail trail){
   return false;
 }
 
+
+//drawDwellProgress(int((c+0.5)*targetWidth), int((r+0.5)*targetHeight));  
+
+void drawDwellProgress(int x, int y, float progress){
+    noFill();
+    strokeWeight(5);
+    arc(x, y, DWELL_PROGRESS_SIZE, DWELL_PROGRESS_SIZE, -PI/2, -PI/2+2*PI*progress);
+    strokeWeight(1);   
+}
+
 // DropdownList is of type ControlGroup.
 void controlEvent(ControlEvent event) {
   if(event.isAssignableFrom(Textfield.class)){
     Textfield t = (Textfield)event.getController();
     mUserTester.userID = int(t.getText());//[TODO] check if not int
-    println(t.getText());
+    mUserTester.init();
   }
   else if(event.isAssignableFrom(DropdownList.class)){
     mDesign = DESIGN.values()[int(event.getController().getValue())];
@@ -426,3 +433,4 @@ void noDataPopout(){
     "Info", javax.swing.JOptionPane.INFORMATION_MESSAGE); 
   noLoop();
 }
+

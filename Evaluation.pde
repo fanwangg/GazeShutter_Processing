@@ -1,39 +1,32 @@
 import java.util.Collections;
 import java.util.Random;
 
-DESIGN[][] LatinSquare = {
-  {DESIGN.DOWN, DESIGN.LEFT, DESIGN.RIGHT, DESIGN.UP},  //DACB
-  {DESIGN.LEFT, DESIGN.RIGHT, DESIGN.UP, DESIGN.DOWN},  //ACBD
-  {DESIGN.RIGHT, DESIGN.UP, DESIGN.DOWN, DESIGN.LEFT},  //CBDA
-  {DESIGN.UP, DESIGN.DOWN, DESIGN.LEFT, DESIGN.RIGHT}}; //BDAC
-
-public class UserTester{
+public class Evaluation{
   int userID=-1;
   String userName = "";
-  int trailNum;
+  int trailNum = 0;
   int lastTriggerTimestamp = -1;
   int lastTriggerTarget = -1;
   int lastTriggerTargetTTL = -1;
   boolean mAmbientMode = false;
-  Trail currentTrail = null;
+  Trail currentTrail;
   int startTime = millis();
-  int mSession = 0;
 
   ArrayList<Integer> trailTarget = new ArrayList<Integer>();
   
   boolean isGazing = false;
   
-  public UserTester(){
+  public Evaluation(){
     init();
   }
 
   void init(){
+    userID=0;
     trailNum = 0;
     lastTriggerTimestamp = -1;
     lastTriggerTarget = -1;
     lastTriggerTargetTTL = -1;
     trailTarget = new ArrayList<Integer>();
-    PilotStudy.mDesign = getCounterBalancedDesign();
   
     isGazing = false;
   
@@ -60,10 +53,8 @@ public class UserTester{
      }
      else{
       //just in case
-      if(currentTrail!=null){
+      if(currentTrail!=null)
         currentTrail.output();
-        currentTrail = null;
-      }
        
        trailNum++;
        if(trailNum == TOTAL_TRAIL_NUM){
@@ -71,52 +62,18 @@ public class UserTester{
        }
      }
   }
-
-  void redoTrail(){
-    if(isGazing){
-      //starting of new trail
-      currentTrail = new Trail(userID, trailNum, trailTarget.get(trailNum));
-     }
-     isGazing = false;
-  }
   
   void finish(){
     javax.swing.JOptionPane.showMessageDialog(null, "Finished",
       "Info", javax.swing.JOptionPane.INFORMATION_MESSAGE); 
-    mSession++;
     init();
-  }
-
-  DESIGN getCounterBalancedDesign(){
-    if(userID==-1)
-      return DESIGN.LEFT;
-    else{
-      println(LatinSquare[userID%4][mSession]);
-      return LatinSquare[userID%4][mSession];
-    }
+    //noLoop();
+    //isFinished = true;
   }
   
   //update
   void trackGazeGesture(){
-    if(!isGazing){
-      return;
-    }
 
-    currentTrail.update();  
-    int tmpTriggerTarget = withinTarget(currentTrail);
-    if(tmpTriggerTarget == -1){
-      lastTriggerTargetTTL -= (millis()-lastTriggerTimestamp);
-      if(lastTriggerTargetTTL<0){
-        lastTriggerTarget = -1;
-      }
-    }
-    else{
-      lastTriggerTarget = tmpTriggerTarget;
-      lastTriggerTargetTTL = HALO_BTN_DELAY_TIME;
-    }
-
-//    println("lastTriggerTargetTTL:"+lastTriggerTargetTTL);
-    lastTriggerTimestamp = millis();
   }
   
 
@@ -130,9 +87,6 @@ public class UserTester{
     else if(key=='`'){
       switchAmbientMode();
     }
-    else if(key=='r'){
-      redoTrail();
-    }
   }
   
   void draw(){
@@ -142,6 +96,10 @@ public class UserTester{
     drawHaloButton();
     drawTestingInfo(mAmbientMode);
     
+    drawDwellProgress(300,300,(millis()-startTime)/DWELL_TIME);
+    if(millis()-startTime > DWELL_TIME)
+      startTime = millis();
+
     //saving trail data
     trackGazeGesture();
   }

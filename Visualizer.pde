@@ -37,6 +37,9 @@ public class Visualizer{
       currentUserId = (currentUserId+userNames.length-1) % userNames.length;
     }else if(key=='r'){
       loadUsers();
+    }else if(keyCode==ENTER){
+      loadAllTrails();
+      outputTable(trails);
     }
 
   }
@@ -50,6 +53,24 @@ public class Visualizer{
     loadTrails();
   }
 
+  void loadAllTrails(){
+    trailNames = listFileNames(dataPath(userNames[currentUserId]));
+
+    if(trailNames==null || trailNames.length==0){
+      noDataPopout();
+      return; 
+    }
+
+    trails = new ArrayList<Trail>();
+    for(int i=0; i<trailNames.length; i++){
+      if(!trailNames[i].endsWith(".json"))
+        continue;
+      JSONObject trailJSON = loadJSONObject(dataPath(userNames[currentUserId]+"/"+trailNames[i]));
+      Trail t = new Trail(trailJSON);
+      trails.add(t);
+    }
+  }
+
   void loadTrails(){
     trailNames = listFileNames(dataPath(userNames[currentUserId]));
 
@@ -60,6 +81,8 @@ public class Visualizer{
 
     trails = new ArrayList<Trail>();
     for(int i=0; i<trailNames.length; i++){
+      if(!trailNames[i].endsWith(".json"))
+        continue;
       JSONObject trailJSON = loadJSONObject(dataPath(userNames[currentUserId]+"/"+trailNames[i]));
       Trail t = new Trail(trailJSON);
       if(t.design == PilotStudy.mDesign){

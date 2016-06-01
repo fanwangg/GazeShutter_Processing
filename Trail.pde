@@ -1,4 +1,4 @@
-public enum STAGE{
+ public enum STAGE{
   STAGE_0, STAGE_1, STAGE_2, STAGE_3, STAGE_4, STAGE_5, STAGE_6;
 
   private static STAGE[] stages = values();
@@ -136,6 +136,123 @@ public class Trail{
     }
 
     return path;
+  }
+
+  int calcStage2Time(){
+    int startTime = -1;
+    int endTime = -1;
+    Point prevPoint = null;
+    for(Point p:path){
+      //1->2
+      if(p.stage==STAGE.STAGE_2.ordinal() && prevPoint!=null && prevPoint.stage==STAGE.STAGE_1.ordinal()){
+        startTime = p.t;
+      }
+      //2->3
+      if(p.stage==STAGE.STAGE_3.ordinal() && prevPoint!=null && prevPoint.stage==STAGE.STAGE_2.ordinal()){
+        endTime = p.t;
+      }
+
+      prevPoint = p;
+    }
+
+    if(startTime!=-1 && endTime!=-1)
+      return (endTime-startTime);
+    else
+      return 0;
+  }
+
+  int calcStage4Time(){
+    int startTime = -1;
+    int endTime = -1;
+    Point prevPoint = null;
+    for(Point p:path){
+      //3->4
+      if(p.stage==STAGE.STAGE_4.ordinal() && prevPoint!=null && prevPoint.stage==STAGE.STAGE_3.ordinal()){
+        startTime = p.t;
+      }
+      //4->5
+      if(p.stage==STAGE.STAGE_5.ordinal() && prevPoint!=null && prevPoint.stage==STAGE.STAGE_4.ordinal()){
+        endTime = p.t;
+      }
+
+      prevPoint = p;
+    }
+
+    if(startTime!=-1 && endTime!=-1)
+      return (endTime-startTime);
+    else
+      return 0;
+  }
+
+  int calcShutterTime(){
+    int startTime = -1;
+    int endTime = -1;
+    Point prevPoint = null;
+    for(Point p:path){
+      //1->2
+      if(p.stage==STAGE.STAGE_2.ordinal() && prevPoint!=null && prevPoint.stage==STAGE.STAGE_1.ordinal()){
+        startTime = p.t;
+      }
+
+      //4->5
+      if(p.stage==STAGE.STAGE_5.ordinal() && prevPoint!=null && prevPoint.stage==STAGE.STAGE_4.ordinal()){
+        endTime = prevPoint.t;
+      }
+
+      //update
+      prevPoint = p;
+    }
+
+    if(startTime!=-1 && endTime!=-1)
+      return (endTime-startTime);
+    else
+      return 0;
+  }
+
+  DISTANCE calcDistance(){
+    switch (design) {
+      case LEFT: 
+        if(target%TARGET_COL_NUM==0)
+          return PilotStudy.DISTANCE.S;
+        else if(target%TARGET_COL_NUM==1)
+          return PilotStudy.DISTANCE.M;
+        else if(target%TARGET_COL_NUM==2)
+          return PilotStudy.DISTANCE.L;
+        break;
+
+      case UP:
+        if(target/TARGET_COL_NUM==0)
+          return DISTANCE.S;
+        else if(target/TARGET_COL_NUM==1)
+          return DISTANCE.M;
+        else if(target/TARGET_COL_NUM==2)
+          return DISTANCE.L;
+        else 
+          return DISTANCE.XL;
+
+      case RIGHT:
+        if(target%TARGET_COL_NUM==0)
+          return DISTANCE.L;
+        else if(target%TARGET_COL_NUM==1)
+          return DISTANCE.M;
+        else if(target%TARGET_COL_NUM==2)
+          return DISTANCE.S;
+        break;
+
+      case DOWN:
+        if(target/TARGET_COL_NUM==3)
+          return DISTANCE.S;
+        else if(target/TARGET_COL_NUM==2)
+          return DISTANCE.M;
+        else if(target/TARGET_COL_NUM==1)
+          return DISTANCE.L;
+        else 
+          return DISTANCE.XL;
+
+      default:
+       return PilotStudy.DISTANCE.ERR; 
+    }
+    return PilotStudy.DISTANCE.ERR;
   }
 }
 

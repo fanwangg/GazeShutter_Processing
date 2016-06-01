@@ -33,3 +33,34 @@ String[] listFileNames(String dir) {
     return null;
   }
 }
+
+void outputTable( ArrayList<Trail> trails){
+  if(trails == null)
+    return;
+
+  Table table = new Table();
+
+  table.addColumn("UserId");
+  table.addColumn("TrailId");
+  table.addColumn("Direction");
+  table.addColumn("Target");
+  table.addColumn("Distance");
+  table.addColumn("T_2");
+  table.addColumn("T_4");
+  table.addColumn("T_Shutter");
+  
+  for(Trail t:trails){
+    TableRow newRow = table.addRow();
+    newRow.setInt("UserId", t.userID);
+    newRow.setInt("TrailId", t.trailID);
+    newRow.setString("Direction", t.design.name());
+    newRow.setInt("Target", t.target);
+    newRow.setString("Distance", t.calcDistance().name());
+    newRow.setInt("T_2", t.calcStage2Time());
+    newRow.setInt("T_4", t.calcStage4Time());
+    newRow.setInt("T_Shutter", t.calcShutterTime());
+
+  }
+  int UserId = trails.get(0).userID;
+  saveTable(table, "data/"+UserId+'/'+UserId+".csv");
+}

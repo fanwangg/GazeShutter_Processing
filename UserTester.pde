@@ -2,10 +2,11 @@ import java.util.Collections;
 import java.util.Random;
 
 DESIGN[][] LatinSquare = {
-  {DESIGN.DOWN, DESIGN.LEFT, DESIGN.RIGHT, DESIGN.UP},  //DACB
-  {DESIGN.LEFT, DESIGN.RIGHT, DESIGN.UP, DESIGN.DOWN},  //ACBD
-  {DESIGN.RIGHT, DESIGN.UP, DESIGN.DOWN, DESIGN.LEFT},  //CBDA
-  {DESIGN.UP, DESIGN.DOWN, DESIGN.LEFT, DESIGN.RIGHT}}; //BDAC
+  {DESIGN.LEFT, DESIGN.UP, DESIGN.DOWN, DESIGN.RIGHT},   //ABDC
+  {DESIGN.UP, DESIGN.RIGHT, DESIGN.LEFT, DESIGN.DOWN},   //BCAD  
+  {DESIGN.RIGHT, DESIGN.DOWN, DESIGN.UP, DESIGN.LEFT},   //CDBA
+  {DESIGN.DOWN, DESIGN.LEFT, DESIGN.RIGHT, DESIGN.UP}};  //DACB
+  
 
 public class UserTester{
   int userID=-1;
@@ -91,8 +92,8 @@ public class UserTester{
     if(userID==-1)
       return DESIGN.LEFT;
     else{
-      println(LatinSquare[userID%4][mSession]);
-      return LatinSquare[userID%4][mSession];
+      println(LatinSquare[userID%4][mSession%4]);
+      return LatinSquare[userID%4][mSession%4];
     }
   }
   

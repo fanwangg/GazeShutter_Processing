@@ -1,14 +1,7 @@
 import java.util.Collections;
-import java.util.Random;
+import java.util.Random;  
 
-int[][] LatinSquare = {
-  {0,1,3,2},
-  {1,2,0,3},
-  {2,3,1,0},
-  {3,0,2,1}};
-
-
-public class UserTester{
+public class UserTester2{
   int userID=-1;
   String userName = "";
   int trailNum;
@@ -24,7 +17,7 @@ public class UserTester{
   
   boolean isGazing = false;
   
-  public UserTester(){
+  public UserTester2(){
     init();
   }
 
@@ -34,7 +27,7 @@ public class UserTester{
     lastTriggerTarget = -1;
     lastTriggerTargetTTL = -1;
     trailTarget = new ArrayList<Integer>();
-    PilotStudy.mDesign = getCounterBalancedDesign();
+    PilotStudy.mMode = getCounterBalancedMode();
   
     isGazing = false;
   
@@ -80,6 +73,7 @@ public class UserTester{
      }else if(trailNum>0){
        trailNum--;
      }
+     
      isGazing = false;
   }
 
@@ -90,15 +84,15 @@ public class UserTester{
     init();
   }
 
-  DESIGN getCounterBalancedDesign(){
+  MODE getCounterBalancedMode(){
     if(userID==-1)
-      return DESIGN.LEFT;
-    
-    DESIGN design = DESIGN.values()[LatinSquare[userID%4][mSession%4]];
-    println(design);
-    return design;
-  }
+      return MODE.STATIC;
   
+    MODE mode = MODE.values()[LatinSquare[userID%4][mSession%4]];
+    println(mode);
+    return mode;
+  }
+
   //update
   void trackGazeGesture(){
     if(!isGazing){
@@ -121,6 +115,7 @@ public class UserTester{
 //    println("lastTriggerTargetTTL:"+lastTriggerTargetTTL);
     lastTriggerTimestamp = millis();
   }
+
   
 
   /*

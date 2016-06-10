@@ -18,6 +18,7 @@ public class Trail{
   static final String PATH_KEY = "path";
   static final String DESIGN_KEY = "design";
   static final String DURATION_KEY = "duration";
+  static final String MODE_KEY = "mode";
 
   
   int trailID;
@@ -25,6 +26,7 @@ public class Trail{
   int target;
   int startTime;
   int duration;
+  MODE mode;
   DESIGN design;
   STAGE stage;
   STAGE prevStage;
@@ -35,6 +37,7 @@ public class Trail{
     this.userID = user;
     this.trailID = trail;
     this.target = target; 
+    this.mode = MODE.STATIC;
     this.stage = STAGE.STAGE_0;
     this.prevStage = STAGE.STAGE_0;
     this.design = PilotStudy.mDesign;
@@ -43,13 +46,13 @@ public class Trail{
   }
 
   Trail(JSONObject trailJSON){
-    this.userID = trailJSON.getInt(Trail.USER_KEY);
-    this.trailID = trailJSON.getInt(Trail.TRAIL_KEY);;
-    this.target = trailJSON.getInt(Trail.TARGET_KEY);
-    this.duration = trailJSON.getInt(Trail.DURATION_KEY);
-    this.design = DESIGN.valueOf(trailJSON.getString(Trail.DESIGN_KEY));
+    this.userID = trailJSON.getInt(Trail.USER_KEY,-1);
+    this.trailID = trailJSON.getInt(Trail.TRAIL_KEY,-1);;
+    this.target = trailJSON.getInt(Trail.TARGET_KEY,-1);
+    this.duration = trailJSON.getInt(Trail.DURATION_KEY,-1);
+    this.design = DESIGN.valueOf(trailJSON.getString(Trail.DESIGN_KEY,""));
+    this.mode = MODE.valueOf(trailJSON.getString(Trail.MODE_KEY,"STATIC"));
     this.path = loadPathFromJson(trailJSON);
-
   }
 
 

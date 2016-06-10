@@ -33,7 +33,7 @@ final int HALO_BTN_DIAMETER = HALO_BTN_RADIUS*2;
 final int HALO_BTN_DIST_THRESHOLD = 50;
 final int HALO_BTN_DELAY_TIME = 500;//ms
 
-final int INFO_MARGIN_X = 300;
+final int INFO_MARGIN_X = 200;
 
 final int targetWidth = WIREFRAME_WIDTH / TARGET_COL_NUM;
 final int targetHeight = WIREFRAME_HEIGHT / TARGET_ROW_NUM;
@@ -63,7 +63,7 @@ void drawWireframe(){
 
 int getCurrentTarget(){
   int target;
-  if(mMode == MODE.VISUALIZING)
+  if(mContent == CONTENT.VISUALIZING)
     target = mVisualizer.currentTarget;
   else if(mUserTester.isGazing)
     target = mUserTester.trailTarget.get(mUserTester.trailNum);
@@ -74,6 +74,11 @@ int getCurrentTarget(){
 }
 
 
+
+/*
+ * drawing functions
+*/
+
 void drawTargets(){
   int target=getCurrentTarget();
   
@@ -82,12 +87,13 @@ void drawTargets(){
       if(r*TARGET_COL_NUM + c == target){
         strokeWeight(STROKE_WEIGHT*2);
         stroke(COLOR_RED);
-        drawCross(int((c+0.5)*targetWidth), int((r+0.5)*targetHeight));  
+        
       }
       else{
         strokeWeight(STROKE_WEIGHT);
         stroke(COLOR_BLACK);
       }
+      drawCross(int((c+0.5)*targetWidth), int((r+0.5)*targetHeight));  
     }
   }
 }
@@ -199,7 +205,7 @@ void drawHomePosition(){
   int UL_Y = height - HOMEPOSITION_HEIGHT - HOMEPOSITION_MARGIN;
   
   
-  if(mMode == MODE.VISUALIZING || mUserTester.isGazing){
+  if(mContent == CONTENT.VISUALIZING || mUserTester.isGazing){
     stroke(COLOR_BLACK);
     strokeWeight(STROKE_WEIGHT);
   }
@@ -235,9 +241,9 @@ void drawTestingInfo(boolean ambientMode){
     pushMatrix();
     translate(WIREFRAME_UL_X+WIREFRAME_WIDTH+INFO_MARGIN_X, WIREFRAME_UL_Y);
     
-    text("User:"+mUserTester.userID, 10, 0);
-    text("Trails:"+mUserTester.trailNum+"/"+TOTAL_TRAIL_NUM, 10, 40);
-    text("Design:"+PilotStudy.mDesign.name(), 10, 80);
+    text("User:"+mUserTester.userID, 10, 50);
+    text("Trails:"+mUserTester.trailNum+"/"+TOTAL_TRAIL_NUM, 10, 100);
+    text("Design:"+PilotStudy.mDesign.name(), 10, 150);
     popMatrix();
 }
 
@@ -249,11 +255,30 @@ void drawVisInfo(){
   pushMatrix();
   translate(WIREFRAME_UL_X+WIREFRAME_WIDTH+INFO_MARGIN_X, WIREFRAME_UL_Y);
   
-  text("User:"+mVisualizer.userNames[mVisualizer.currentUserId], 10, 0);
-  text("DESIGN:"+PilotStudy.mDesign, 10, 50);
-  text("Task:("+mVisualizer.currentTarget/TARGET_COL_NUM+","+mVisualizer.currentTarget%TARGET_COL_NUM+")", 10, 100);
+  text("User:"+mVisualizer.userNames[mVisualizer.currentUserId], 10, 50);
+  text("DESIGN:"+PilotStudy.mDesign, 10, 100);
+  text("Task:("+mVisualizer.currentTarget/TARGET_COL_NUM+","+mVisualizer.currentTarget%TARGET_COL_NUM+")", 10, 150);
    
   popMatrix();
+}
+
+void drawContentInfo(){
+  textSize(32);
+  fill(COLOR_BLACK);
+  pushMatrix();
+  translate(WIREFRAME_UL_X+WIREFRAME_WIDTH+INFO_MARGIN_X, WIREFRAME_UL_Y);
+
+  text("Content:"+PilotStudy.mContent, 10, 0);
+  
+  popMatrix();
+}
+
+//drawDwellProgress(int((c+0.5)*targetWidth), int((r+0.5)*targetHeight)); 
+void drawDwellProgress(int x, int y, float progress){
+    noFill();
+    strokeWeight(5);
+    arc(x, y, DWELL_PROGRESS_SIZE, DWELL_PROGRESS_SIZE, -PI/2, -PI/2+2*PI*progress);
+    strokeWeight(1);   
 }
 
 void setupPanel(){
@@ -403,14 +428,7 @@ boolean isWithinHaloButton(Trail trail){
 }
 
 
-//drawDwellProgress(int((c+0.5)*targetWidth), int((r+0.5)*targetHeight));  
 
-void drawDwellProgress(int x, int y, float progress){
-    noFill();
-    strokeWeight(5);
-    arc(x, y, DWELL_PROGRESS_SIZE, DWELL_PROGRESS_SIZE, -PI/2, -PI/2+2*PI*progress);
-    strokeWeight(1);   
-}
 
 // DropdownList is of type ControlGroup.
 void controlEvent(ControlEvent event) {

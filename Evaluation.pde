@@ -93,7 +93,7 @@ public class Evaluation{
     background(COLOR_WHITE);
     drawWireframe();
     drawHomePosition();
-    drawHaloButton();
+    //drawHaloButton();
     drawTestingInfo(mAmbientMode);
     
     drawDwellProgress(300,300,(millis()-startTime)/DWELL_TIME);

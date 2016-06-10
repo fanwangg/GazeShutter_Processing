@@ -1,44 +1,31 @@
 import java.util.Collections;
 import java.util.Random;  
 
-public class UserTester2{
-  int userID=-1;
-  String userName = "";
-  int trailNum;
-  int lastTriggerTimestamp = -1;
-  int lastTriggerTarget = -1;
-  int lastTriggerTargetTTL = -1;
-  boolean mAmbientMode = false;
-  Trail currentTrail = null;
-  int startTime = millis();
-  int mSession = 0;
-
-  ArrayList<Integer> trailTarget = new ArrayList<Integer>();
-  
-  boolean isGazing = false;
-  
-  public UserTester2(){
+public class Study2 extends UserTester{
+public Study2(){
+    super();
+    TARGET_ROW_NUM = 3;
+    TARGET_COL_NUM = 3;
+    TRAIL_PER_TARGET = 8;
     init();
+    updateDisplayDimension(this);
   }
 
   void init(){
-    trailNum = 0;
-    lastTriggerTimestamp = -1;
-    lastTriggerTarget = -1;
-    lastTriggerTargetTTL = -1;
-    trailTarget = new ArrayList<Integer>();
     PilotStudy.mMode = getCounterBalancedMode();
-  
-    isGazing = false;
-  
+
+    trailTarget = new ArrayList<Integer>();
     for(int r=0; r<TARGET_ROW_NUM; r++){
       for(int c=0; c<TARGET_COL_NUM; c++){
-        for(int t=0; t<TRAIL_PER_TARGET; t++){ 
-          trailTarget.add(r*TARGET_COL_NUM+c);
+        if((r+c)%2==1){
+          for(int t=0; t<TRAIL_PER_TARGET; t++){ 
+            trailTarget.add(r*TARGET_COL_NUM+c);
+          }
         }
       }
     }
     Collections.shuffle(trailTarget);
+    println(trailTarget.size());
   }
 
   void switchAmbientMode(){
@@ -51,6 +38,7 @@ public class UserTester2{
      if(isGazing){
       //starting of new trail
       currentTrail = new Trail(userID, trailNum, trailTarget.get(trailNum));
+      PilotStudy.mDesign = getDesignByMode();
      }
      else{
       //just in case
@@ -89,8 +77,47 @@ public class UserTester2{
       return MODE.STATIC;
   
     MODE mode = MODE.values()[LatinSquare[userID%4][mSession%4]];
-    println(mode);
     return mode;
+  }
+
+  DESIGN getDesignByMode(){
+    if(PilotStudy.mMode==null)
+      return DESIGN.RIGHT;
+    
+    DESIGN  design;
+    println(PilotStudy.mMode);
+    if(PilotStudy.mMode == MODE.STATIC){
+      design = DESIGN.STATIC;
+    }else if(PilotStudy.mMode == MODE.RANDOM){
+      design = DESIGN.values()[int(random(4))];//  LEFT, UP, RIGHT, DOWN
+    }else if(PilotStudy.mMode == MODE.SHORTEST){
+      if(currentTrail.getRow()==0)
+        design = DESIGN.UP;
+      else if(currentTrail.getRow()==2)
+        design = DESIGN.DOWN;
+      else if(currentTrail.getRow()==1 && currentTrail.getCol()==2)
+        design = DESIGN.RIGHT;
+      else if(currentTrail.getRow()==1 && currentTrail.getCol()==2)
+        design = DESIGN.LEFT;
+      else
+        design = DESIGN.STATIC;
+    }else if(PilotStudy.mMode == MODE.LONGEST){
+      if(currentTrail.getRow()==0)
+        design = DESIGN.DOWN;
+      else if(currentTrail.getRow()==2)
+        design = DESIGN.UP;
+      else if(currentTrail.getRow()==1 && currentTrail.getCol()==2)
+        design = DESIGN.LEFT;
+      else if(currentTrail.getRow()==1 && currentTrail.getCol()==2)
+        design = DESIGN.RIGHT;
+      else
+        design = DESIGN.STATIC;
+    }else{
+      design = DESIGN.STATIC;
+      println("something went wrong in mMode");
+    }
+
+    return design;
   }
 
   //update
@@ -137,7 +164,7 @@ public class UserTester2{
     background(COLOR_WHITE);
     drawWireframe();
     drawHomePosition();
-    drawHaloButton();
+    drawHaloButton(currentTrail);
     drawTestingInfo(mAmbientMode);
     
     //saving trail data

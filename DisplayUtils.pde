@@ -1,7 +1,9 @@
-static final int TARGET_ROW_NUM = 4;
-static final int TARGET_COL_NUM = 3;
-final int TRAIL_PER_TARGET = 3;
-final int TOTAL_TRAIL_NUM = TARGET_ROW_NUM * TARGET_COL_NUM * TRAIL_PER_TARGET;
+static int TARGET_ROW_NUM = 4;
+static int TARGET_COL_NUM = 3;
+static int TRAIL_PER_TARGET = 3;
+static int TOTAL_TRAIL_NUM = TARGET_ROW_NUM * TARGET_COL_NUM * TRAIL_PER_TARGET;
+
+
 final String outputPath = new String("data/");
 
 //GUI const
@@ -18,8 +20,8 @@ final color COLOR_HALOBTN_AFTER  = color(173,255,47);
 final int STROKE_WEIGHT = 2;
 final int SCREEN_WIDTH = 1920;//deal with width/height init. problem
 final int SCREEN_HEIGHT = 1080;
-final int WIREFRAME_WIDTH  = 660;
-final int WIREFRAME_HEIGHT = 896;
+static final int WIREFRAME_WIDTH  = 660;
+static final int WIREFRAME_HEIGHT = 896;
 final int WIREFRAME_RADIUS = 18;
 final int WIREFRAME_UL_X = (SCREEN_WIDTH - WIREFRAME_WIDTH)/2;
 final int WIREFRAME_UL_Y = (SCREEN_HEIGHT - WIREFRAME_HEIGHT)/2;
@@ -35,8 +37,8 @@ final int HALO_BTN_DELAY_TIME = 500;//ms
 
 final int INFO_MARGIN_X = 200;
 
-final int targetWidth = WIREFRAME_WIDTH / TARGET_COL_NUM;
-final int targetHeight = WIREFRAME_HEIGHT / TARGET_ROW_NUM;
+static int targetWidth = WIREFRAME_WIDTH / TARGET_COL_NUM;
+static int targetHeight = WIREFRAME_HEIGHT / TARGET_ROW_NUM;
 final int CROSS_SIZE = 16;
 
 
@@ -65,14 +67,14 @@ int getCurrentTarget(){
   int target;
   if(mContent == CONTENT.VISUALIZING)
     target = mVisualizer.currentTarget;
-  else if(mUserTester.isGazing)
-    target = mUserTester.trailTarget.get(mUserTester.trailNum);
+  else if((mContent == CONTENT.USER_TESTING || mContent == CONTENT.USER_TESTING2)
+         && mUserTester.isGazing)
+    target = mUserTester.getCurrentTarget();
   else
     target = -1;
 
   return target;
 }
-
 
 
 /*
@@ -87,13 +89,13 @@ void drawTargets(){
       if(r*TARGET_COL_NUM + c == target){
         strokeWeight(STROKE_WEIGHT*2);
         stroke(COLOR_RED);
-        
+        drawCross(int((c+0.5)*targetWidth), int((r+0.5)*targetHeight));  
       }
       else{
         strokeWeight(STROKE_WEIGHT);
         stroke(COLOR_BLACK);
+        drawCross(int((c+0.5)*targetWidth), int((r+0.5)*targetHeight));  
       }
-      drawCross(int((c+0.5)*targetWidth), int((r+0.5)*targetHeight));  
     }
   }
 }
@@ -130,30 +132,29 @@ void drawLEFT(int r, int c, int margin){
             -PI*2/6, PI*2/6, CHORD); 
 }
       
-void drawHaloButton(){  
+void drawHaloButton(Trail trail){  
   //[TODO] using mUserTester.lastTriggerTarget
   //int r = (mouseY - WIREFRAME_UL_Y)/targetHeight;
   //int c = (mouseX - WIREFRAME_UL_X)/targetWidth;
-
-  if(mUserTester.currentTrail==null)
+  if(trail==null)
     return;
 
-  if(STAGE.STAGE_0.ordinal() < mUserTester.currentTrail.stage.ordinal()
-    && mUserTester.currentTrail.stage.ordinal() < STAGE.STAGE_5.ordinal()) {
+  if(STAGE.STAGE_0.ordinal() < trail.stage.ordinal()
+    && trail.stage.ordinal() < STAGE.STAGE_5.ordinal()) {
     //|| (mUserTester.lastTriggerTarget!=-1 
     //    &&mUserTester.lastTriggerTarget==getCurrentTarget()
     //    &&mUserTester.isGazing))
 
     //int r = mUserTester.lastTriggerTarget / TARGET_COL_NUM;
     //int c = mUserTester.lastTriggerTarget % TARGET_COL_NUM;
-    int r = mUserTester.currentTrail.getRow();
-    int c = mUserTester.currentTrail.getCol();
+    int r = trail.getRow();
+    int c = trail.getCol();
     int margin = HALO_BTN_RADIUS/2;
 
     pushMatrix();
     translate(WIREFRAME_UL_X, WIREFRAME_UL_Y);
     
-    if(mUserTester.currentTrail.stage.ordinal() < STAGE.STAGE_3.ordinal())
+    if(trail.stage.ordinal() < STAGE.STAGE_3.ordinal())
       fill(COLOR_HALOBTN_BEFORE);
     else
       fill(COLOR_HALOBTN_AFTER);
@@ -236,15 +237,17 @@ void drawTestingInfo(boolean ambientMode){
     mModeDropdown.show();
     mUserIdText.show();
   }
-    textSize(32);
-    fill(COLOR_BLACK);
-    pushMatrix();
-    translate(WIREFRAME_UL_X+WIREFRAME_WIDTH+INFO_MARGIN_X, WIREFRAME_UL_Y);
-    
-    text("User:"+mUserTester.userID, 10, 50);
-    text("Trails:"+mUserTester.trailNum+"/"+TOTAL_TRAIL_NUM, 10, 100);
-    text("Design:"+PilotStudy.mDesign.name(), 10, 150);
-    popMatrix();
+
+  textSize(32);
+  fill(COLOR_BLACK);
+  pushMatrix();
+  translate(WIREFRAME_UL_X+WIREFRAME_WIDTH+INFO_MARGIN_X, WIREFRAME_UL_Y);
+  
+  text("User:"+mUserTester.userID, 10, 50);
+  text("Trails:"+mUserTester.trailNum+"/"+TOTAL_TRAIL_NUM, 10, 100);
+  text("Design:"+PilotStudy.mDesign.name(), 10, 150);
+  text("Mode:"+PilotStudy.mMode.name(),10,200);
+  popMatrix();
 }
 
 
@@ -450,5 +453,11 @@ void noDataPopout(){
   javax.swing.JOptionPane.showMessageDialog(null, "No data",
     "Info", javax.swing.JOptionPane.INFORMATION_MESSAGE); 
   noLoop();
+}
+
+void updateDisplayDimension(UserTester userTester){
+  targetWidth = WIREFRAME_WIDTH / TARGET_COL_NUM;
+  targetHeight = WIREFRAME_HEIGHT / TARGET_ROW_NUM;
+  TOTAL_TRAIL_NUM = userTester.trailTarget.size();
 }
 

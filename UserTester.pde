@@ -1,14 +1,13 @@
 import java.util.Collections;
 import java.util.Random;
 
-int[][] LatinSquare = {
-  {0,1,3,2},
-  {1,2,0,3},
-  {2,3,1,0},
-  {3,0,2,1}};
+public abstract class UserTester{
+  int[][] LatinSquare = {
+    {0,1,3,2},
+    {1,2,0,3},
+    {2,3,1,0},
+    {3,0,2,1}};
 
-
-public class UserTester{
   int userID=-1;
   String userName = "";
   int trailNum;
@@ -25,28 +24,14 @@ public class UserTester{
   boolean isGazing = false;
   
   public UserTester(){
-    init();
-  }
-
-  void init(){
     trailNum = 0;
     lastTriggerTimestamp = -1;
     lastTriggerTarget = -1;
     lastTriggerTargetTTL = -1;
-    trailTarget = new ArrayList<Integer>();
-    PilotStudy.mDesign = getCounterBalancedDesign();
-  
     isGazing = false;
-  
-    for(int r=0; r<TARGET_ROW_NUM; r++){
-      for(int c=0; c<TARGET_COL_NUM; c++){
-        for(int t=0; t<TRAIL_PER_TARGET; t++){ 
-          trailTarget.add(r*TARGET_COL_NUM+c);
-        }
-      }
-    }
-    Collections.shuffle(trailTarget);
   }
+
+  abstract void init();
 
   void switchAmbientMode(){
     mAmbientMode = !mAmbientMode;
@@ -142,10 +127,17 @@ public class UserTester{
     background(COLOR_WHITE);
     drawWireframe();
     drawHomePosition();
-    drawHaloButton();
+    drawHaloButton(currentTrail);
     drawTestingInfo(mAmbientMode);
     
     //saving trail data
     trackGazeGesture();
+  }
+
+  int getCurrentTarget(){
+    if(trailNum < trailTarget.size())
+      return trailTarget.get(trailNum);
+    else
+      return -1;
   }
 }

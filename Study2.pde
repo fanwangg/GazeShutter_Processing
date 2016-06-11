@@ -25,35 +25,12 @@ public Study2(){
       }
     }
     Collections.shuffle(trailTarget);
-    println(trailTarget.size());
   }
 
   void switchAmbientMode(){
     mAmbientMode = !mAmbientMode;
   }
   
-  void switchGazeState(){
-     isGazing = !isGazing;
-     
-     if(isGazing){
-      //starting of new trail
-      currentTrail = new Trail(userID, trailNum, trailTarget.get(trailNum));
-      PilotStudy.mDesign = getDesignByMode();
-     }
-     else{
-      //just in case
-      if(currentTrail!=null){
-        currentTrail.output();
-        currentTrail = null;
-      }
-       
-       trailNum++;
-       if(trailNum == TOTAL_TRAIL_NUM){
-         finish();
-       }
-     }
-  }
-
   void redoTrail(){
     if(isGazing){
       //starting of new trail
@@ -76,7 +53,7 @@ public Study2(){
     if(userID==-1)
       return MODE.STATIC;
   
-    MODE mode = MODE.values()[LatinSquare[userID%4][mSession%4]];
+    MODE mode = MODE.values()[LatinSquare4[userID%4][mSession%4]];
     return mode;
   }
 
@@ -142,23 +119,6 @@ public Study2(){
     lastTriggerTimestamp = millis();
   }
 
-  
-
-  /*
-   *  The main functions of processing 
-   */
-  void keyPressed(){
-    if(key==' '){
-      switchGazeState();
-    }
-    else if(key=='`'){
-      switchAmbientMode();
-    }
-    else if(key=='r'){
-      redoTrail();
-    }
-  }
-  
   void draw(){
     background(COLOR_WHITE);
     drawWireframe();
@@ -168,5 +128,27 @@ public Study2(){
     
     //saving trail data
     trackGazeGesture();
+  }
+
+   void switchGazeState(){
+     isGazing = !isGazing;
+
+     if(isGazing){
+      //starting of new trail
+      currentTrail = new Trail(userID, trailNum, trailTarget.get(trailNum));
+      PilotStudy.mDesign = getDesignByMode();
+     }
+     else{
+      //just in case
+      if(currentTrail!=null){
+        currentTrail.output();
+        currentTrail = null;
+      }
+
+       trailNum++;
+       if(trailNum == TOTAL_TRAIL_NUM){
+         finish();
+       }
+     }
   }
 }

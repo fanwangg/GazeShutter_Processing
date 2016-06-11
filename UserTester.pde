@@ -2,11 +2,19 @@ import java.util.Collections;
 import java.util.Random;
 
 public abstract class UserTester{
-  int[][] LatinSquare = {
+  int[][] LatinSquare4 = {
     {0,1,3,2},
     {1,2,0,3},
     {2,3,1,0},
     {3,0,2,1}};
+
+  int[][] LatinSquare3 = {
+    {0,1,2},
+    {1,2,0},
+    {2,1,0},
+    {0,2,1},
+    {1,0,2},
+    {2,0,1}};
 
   int userID=-1;
   String userName = "";
@@ -79,7 +87,7 @@ public abstract class UserTester{
     if(userID==-1)
       return DESIGN.LEFT;
     
-    DESIGN design = DESIGN.values()[LatinSquare[userID%4][mSession%4]];
+    DESIGN design = DESIGN.values()[LatinSquare4[userID%4][mSession%4]];
     println(design);
     return design;
   }
@@ -92,6 +100,7 @@ public abstract class UserTester{
 
     currentTrail.update();  
     int tmpTriggerTarget = withinTarget(currentTrail);
+    
     if(tmpTriggerTarget == -1){
       lastTriggerTargetTTL -= (millis()-lastTriggerTimestamp);
       if(lastTriggerTargetTTL<0){
@@ -100,10 +109,9 @@ public abstract class UserTester{
     }
     else{
       lastTriggerTarget = tmpTriggerTarget;
-      lastTriggerTargetTTL = HALO_BTN_DELAY_TIME;
+      lastTriggerTargetTTL = int(DWELL_TIME);
     }
 
-//    println("lastTriggerTargetTTL:"+lastTriggerTargetTTL);
     lastTriggerTimestamp = millis();
   }
   

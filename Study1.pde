@@ -47,7 +47,7 @@ public class Study1 extends UserTester{
     if(userID==-1)
       return DESIGN.LEFT;
     
-    DESIGN design = DESIGN.values()[LatinSquare[userID%4][mSession%4]];
+    DESIGN design = DESIGN.values()[LatinSquare4[userID%4][mSession%4]];
     println(design);
     return design;
   }

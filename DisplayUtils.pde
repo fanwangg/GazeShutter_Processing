@@ -42,7 +42,8 @@ static int targetHeight = WIREFRAME_HEIGHT / TARGET_ROW_NUM;
 final int CROSS_SIZE = 16;
 
 
-final float DWELL_TIME = 1000;//ms
+static float DWELL_TIME = 1000;//ms
+
 final int DWELL_PROGRESS_SIZE = 72;
 final String USER_DESIGN = "USER_DESIGN";
 final String USER_NAME   = "USER_NAME";
@@ -67,7 +68,7 @@ int getCurrentTarget(){
   int target;
   if(mContent == CONTENT.VISUALIZING)
     target = mVisualizer.currentTarget;
-  else if((mContent == CONTENT.USER_TESTING || mContent == CONTENT.USER_TESTING2)
+  else if((mContent == CONTENT.USER_TESTING || mContent == CONTENT.USER_TESTING2 || mContent == CONTENT.EVALUATION )
          && mUserTester.isGazing)
     target = mUserTester.getCurrentTarget();
   else
@@ -166,6 +167,10 @@ void drawHaloButton(Trail trail){
   if(trail==null)
     return;
 
+  if(PilotStudy.mUserTester instanceof Evaluation
+    && PilotStudy.mEvalMode != EVALUATION_MODE.GAZESHUTTER)
+    return;
+
   if(STAGE.STAGE_0.ordinal() < trail.stage.ordinal()
     && trail.stage.ordinal() < STAGE.STAGE_5.ordinal()) {
     
@@ -173,12 +178,10 @@ void drawHaloButton(Trail trail){
     float c = (float)trail.getCol();
     int margin = HALO_BTN_RADIUS/2;
 
-    if(PilotStudy.mMode != MODE.NONE){
+    if(PilotStudy.mUserTester instanceof Study2){
       r = (float(mouseY - WIREFRAME_UL_Y - targetHeight/2))/targetHeight;
       c = (float(mouseX - WIREFRAME_UL_X - targetWidth/2))/targetWidth;
     }
-
-    println(""+r+"  "+c);
 
     pushMatrix();
     translate(WIREFRAME_UL_X, WIREFRAME_UL_Y);
@@ -276,6 +279,7 @@ void drawTestingInfo(boolean ambientMode){
   if(!ambientMode){
     text("Design:"+PilotStudy.mDesign.name(), 10, 150);
     text("Mode:"+PilotStudy.mMode.name(),10,200);
+    text("EvalMode:"+PilotStudy.mEvalMode.name(),10,250);
   }
   popMatrix();
 }
@@ -307,11 +311,21 @@ void drawContentInfo(){
 }
 
 //drawDwellProgress(int((c+0.5)*targetWidth), int((r+0.5)*targetHeight)); 
-void drawDwellProgress(int x, int y, float progress){
+void drawDwellProgress(int trail, float progress){
+    int r = trail/TARGET_COL_NUM;
+    int c = trail%TARGET_COL_NUM;
+    int y = int((r+0.5)*targetHeight);
+    int x = int((c+0.5)*targetWidth);
+
     noFill();
     strokeWeight(5);
+    stroke(COLOR_RED);
+    
+    pushMatrix();
+    translate(WIREFRAME_UL_X, WIREFRAME_UL_Y);
     arc(x, y, DWELL_PROGRESS_SIZE, DWELL_PROGRESS_SIZE, -PI/2, -PI/2+2*PI*progress);
     strokeWeight(1);   
+    popMatrix();
 }
 
 void setupPanel(){

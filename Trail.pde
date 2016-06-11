@@ -87,13 +87,24 @@ public class Trail{
     if(PilotStudy.mUserTester  instanceof Study1){
       String fileName = new String(userID+"/study1_"+mDesign+"_"+trailID+"_"+target+".json");
       saveJSONObject(json, outputPath+fileName);
-    }else{
+    }else if(PilotStudy.mUserTester  instanceof Study2){
       String fileName = new String(userID+"/study2_"+mMode+"_"+trailID+"_"+target+".json");
       saveJSONObject(json, outputPath+fileName);
+    }else{
+      String fileName = new String(userID+"/eval_"+mEvalMode+"_"+trailID+"_"+target+".json");
+      saveJSONObject(json, outputPath+fileName);
     }
+
+  }
+
+  void updateStage(STAGE stage){
+    this.stage = stage;
   }
 
   void updateStage(){
+    if(PilotStudy.mEvalMode == EVALUATION_MODE.DWELL_SHORT && PilotStudy.mEvalMode == EVALUATION_MODE.DWELL_LONG)
+      return;
+
     if(stage==STAGE.STAGE_0 && isWithinTarget(this))
       stage = STAGE.STAGE_1;
     else if(stage==STAGE.STAGE_1 && !isWithinTarget(this))

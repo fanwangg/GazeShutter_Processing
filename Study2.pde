@@ -85,7 +85,6 @@ public Study2(){
       return DESIGN.RIGHT;
     
     DESIGN  design;
-    println(PilotStudy.mMode);
     if(PilotStudy.mMode == MODE.STATIC){
       design = DESIGN.STATIC;
     }else if(PilotStudy.mMode == MODE.RANDOM){
@@ -97,7 +96,7 @@ public Study2(){
         design = DESIGN.DOWN;
       else if(currentTrail.getRow()==1 && currentTrail.getCol()==2)
         design = DESIGN.RIGHT;
-      else if(currentTrail.getRow()==1 && currentTrail.getCol()==2)
+      else if(currentTrail.getRow()==1 && currentTrail.getCol()==0)
         design = DESIGN.LEFT;
       else
         design = DESIGN.STATIC;
@@ -108,7 +107,7 @@ public Study2(){
         design = DESIGN.UP;
       else if(currentTrail.getRow()==1 && currentTrail.getCol()==2)
         design = DESIGN.LEFT;
-      else if(currentTrail.getRow()==1 && currentTrail.getCol()==2)
+      else if(currentTrail.getRow()==1 && currentTrail.getCol()==0)
         design = DESIGN.RIGHT;
       else
         design = DESIGN.STATIC;

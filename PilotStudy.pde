@@ -5,7 +5,11 @@ public enum DESIGN{
   LEFT, UP, RIGHT, DOWN, DYNAMIC_4_POINT, DYNAMIC_1_POINT, STATIC;
 }
 public enum MODE{
-  STATIC, SHORTEST, LONGEST, RANDOM;
+  STATIC, SHORTEST, LONGEST, RANDOM, NONE;
+}
+
+public enum SHOWING_TARGET{
+  ONE, EVEN, ALL, NONE;
 }
 
 public enum CONTENT{
@@ -23,10 +27,11 @@ public enum DISTANCE{
 static CONTENT mContent;
 static DESIGN mDesign;
 static MODE mMode;
+static SHOWING_TARGET mShowingTarget = SHOWING_TARGET.ONE;
 static ControlP5 mCP5;
-UserTester mUserTester;
-Visualizer mVisualizer;
-Evaluation mEvaluation;
+static UserTester mUserTester;
+static Visualizer mVisualizer;
+static Evaluation mEvaluation;
 
 
 void keyPressed(){
@@ -49,7 +54,7 @@ void setup() {
    
    mContent = CONTENT.USER_TESTING;
    mDesign = DESIGN.RIGHT;
-   mMode = MODE.STATIC;
+   mMode = MODE.NONE;
    
    mUserTester = new Study1();//polymorphism
    mVisualizer = new Visualizer();
@@ -72,8 +77,11 @@ void draw(){
 void updateContent(){
   if(mContent==CONTENT.USER_TESTING){
     mUserTester = new Study1();
+    mMode = MODE.NONE;
+    mShowingTarget = SHOWING_TARGET.ONE;
   }else{
     mUserTester = new Study2();
+    mShowingTarget = SHOWING_TARGET.EVEN;
   }
 
 }

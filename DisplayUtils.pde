@@ -94,7 +94,13 @@ void drawTargets(){
       else{
         strokeWeight(STROKE_WEIGHT);
         stroke(COLOR_BLACK);
-        drawCross(int((c+0.5)*targetWidth), int((r+0.5)*targetHeight));  
+
+        if(PilotStudy.mShowingTarget == SHOWING_TARGET.ALL){
+          drawCross(int((c+0.5)*targetWidth), int((r+0.5)*targetHeight));  
+        }
+        else if(PilotStudy.mShowingTarget == SHOWING_TARGET.EVEN && (r+c)%2==1){
+          drawCross(int((c+0.5)*targetWidth), int((r+0.5)*targetHeight));  
+        }
       }
     }
   }
@@ -111,6 +117,11 @@ void drawUP(int r, int c, int margin){
             PI/6, PI*5/6, CHORD);
 }
 
+void drawUP(float r, float c, int margin){
+  arc(int((c+0.5)*targetWidth), -margin, 
+            HALO_BTN_DIAMETER, HALO_BTN_DIAMETER, 
+            PI/6, PI*5/6, CHORD);
+}
 
 void drawRIGHT(int r, int c, int margin){
       arc(WIREFRAME_WIDTH+margin, int((r+0.5)*targetHeight), 
@@ -118,6 +129,11 @@ void drawRIGHT(int r, int c, int margin){
           PI*4/6, PI*8/6, CHORD);
 }
 
+void drawRIGHT(float r, float c, int margin){
+      arc(WIREFRAME_WIDTH+margin, int((r+0.5)*targetHeight), 
+          HALO_BTN_DIAMETER, HALO_BTN_DIAMETER, 
+          PI*4/6, PI*8/6, CHORD);
+}
 
 void drawDOWN(int r, int c, int margin){
         arc(int((c+0.5)*targetWidth), WIREFRAME_HEIGHT+margin, 
@@ -125,8 +141,19 @@ void drawDOWN(int r, int c, int margin){
             -PI*5/6, -PI*1/6, CHORD);
 }
 
-void drawLEFT(int r, int c, int margin){
+void drawDOWN(float r, float c, int margin){
+        arc(int((c+0.5)*targetWidth), WIREFRAME_HEIGHT+margin, 
+            HALO_BTN_DIAMETER, HALO_BTN_DIAMETER, 
+            -PI*5/6, -PI*1/6, CHORD);
+}
 
+void drawLEFT(int r, int c, int margin){
+        arc(-margin, int((r+0.5)*targetHeight), 
+            HALO_BTN_DIAMETER, HALO_BTN_DIAMETER, 
+            -PI*2/6, PI*2/6, CHORD); 
+}
+
+void drawLEFT(float r, float c, int margin){
         arc(-margin, int((r+0.5)*targetHeight), 
             HALO_BTN_DIAMETER, HALO_BTN_DIAMETER, 
             -PI*2/6, PI*2/6, CHORD); 
@@ -141,15 +168,17 @@ void drawHaloButton(Trail trail){
 
   if(STAGE.STAGE_0.ordinal() < trail.stage.ordinal()
     && trail.stage.ordinal() < STAGE.STAGE_5.ordinal()) {
-    //|| (mUserTester.lastTriggerTarget!=-1 
-    //    &&mUserTester.lastTriggerTarget==getCurrentTarget()
-    //    &&mUserTester.isGazing))
-
-    //int r = mUserTester.lastTriggerTarget / TARGET_COL_NUM;
-    //int c = mUserTester.lastTriggerTarget % TARGET_COL_NUM;
-    int r = trail.getRow();
-    int c = trail.getCol();
+    
+    float r = (float)trail.getRow();
+    float c = (float)trail.getCol();
     int margin = HALO_BTN_RADIUS/2;
+
+    if(PilotStudy.mMode != MODE.NONE){
+      r = (float(mouseY - WIREFRAME_UL_Y - targetHeight/2))/targetHeight;
+      c = (float(mouseX - WIREFRAME_UL_X - targetWidth/2))/targetWidth;
+    }
+
+    println(""+r+"  "+c);
 
     pushMatrix();
     translate(WIREFRAME_UL_X, WIREFRAME_UL_Y);
@@ -158,7 +187,6 @@ void drawHaloButton(Trail trail){
       fill(COLOR_HALOBTN_BEFORE);
     else
       fill(COLOR_HALOBTN_AFTER);
-
 
     switch(mDesign){
       case DOWN:
@@ -193,7 +221,7 @@ void drawHaloButton(Trail trail){
       
       
       case STATIC:
-        ellipse(3.5*targetWidth, 0, HALO_BTN_RADIUS/2, HALO_BTN_RADIUS/2);
+        ellipse(3*targetWidth, 0, HALO_BTN_RADIUS, HALO_BTN_RADIUS);
         break;
     }
         
@@ -245,8 +273,10 @@ void drawTestingInfo(boolean ambientMode){
   
   text("User:"+mUserTester.userID, 10, 50);
   text("Trails:"+mUserTester.trailNum+"/"+TOTAL_TRAIL_NUM, 10, 100);
-  text("Design:"+PilotStudy.mDesign.name(), 10, 150);
-  text("Mode:"+PilotStudy.mMode.name(),10,200);
+  if(!ambientMode){
+    text("Design:"+PilotStudy.mDesign.name(), 10, 150);
+    text("Mode:"+PilotStudy.mMode.name(),10,200);
+  }
   popMatrix();
 }
 
@@ -319,7 +349,6 @@ boolean isWithinHomeBtn(int x, int y){
     return false;
   return true;
 }
-
 
 /*
  *  return val targetID, or -1 if none
@@ -424,8 +453,13 @@ boolean isWithinHaloButton(Trail trail){
  
       break;  
     
-    case DYNAMIC_4_POINT:
-      break;
+    case STATIC:
+      dx = mx - 3*targetWidth;
+      dy = my - 0;
+      distance = sqrt(dx*dx + dy*dy);
+      if(distance<HALO_BTN_RADIUS)
+        return true;
+      break; 
   }
   return false;
 }

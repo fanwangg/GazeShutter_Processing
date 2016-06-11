@@ -84,8 +84,13 @@ public class Trail{
     }
     json.setJSONArray(PATH_KEY, pathJSON);
     
-    String fileName = new String(userID+"/"+mDesign+"_"+trailID+"_"+target+".json");
-    saveJSONObject(json, outputPath+fileName);
+    if(PilotStudy.mUserTester  instanceof Study1){
+      String fileName = new String(userID+"/study1_"+mDesign+"_"+trailID+"_"+target+".json");
+      saveJSONObject(json, outputPath+fileName);
+    }else{
+      String fileName = new String(userID+"/study2_"+mMode+"_"+trailID+"_"+target+".json");
+      saveJSONObject(json, outputPath+fileName);
+    }
   }
 
   void updateStage(){

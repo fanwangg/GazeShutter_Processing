@@ -49,7 +49,7 @@ void keyPressed(){
 }
 
 void setup() {
-   fullScreen(2);
+   fullScreen(1);
    smooth();
    //frameRate(30);
    

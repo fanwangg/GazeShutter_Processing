@@ -13,7 +13,7 @@ public Study2(){
 
   void init(){
     PilotStudy.mMode = getCounterBalancedMode();
-
+    trailNum = 0;
     trailTarget = new ArrayList<Integer>();
     for(int r=0; r<TARGET_ROW_NUM; r++){
       for(int c=0; c<TARGET_COL_NUM; c++){

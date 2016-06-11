@@ -89,7 +89,12 @@ void drawTargets(){
     for(int c=0; c<TARGET_COL_NUM; c++){
       if(r*TARGET_COL_NUM + c == target){
         strokeWeight(STROKE_WEIGHT*2);
-        stroke(COLOR_RED);
+        if(PilotStudy.mUserTester instanceof Evaluation
+          && PilotStudy.mUserTester.currentTrail != null 
+          && PilotStudy.mUserTester.currentTrail.stage==STAGE.STAGE_5)
+          stroke(COLOR_GREEN);
+        else
+          stroke(COLOR_RED);
         drawCross(int((c+0.5)*targetWidth), int((r+0.5)*targetHeight));  
       }
       else{
@@ -471,7 +476,7 @@ boolean isWithinHaloButton(Trail trail){
       dx = mx - 3*targetWidth;
       dy = my - 0;
       distance = sqrt(dx*dx + dy*dy);
-      if(distance<HALO_BTN_RADIUS)
+      if(distance<1.5*HALO_BTN_RADIUS)
         return true;
       break; 
   }

@@ -14,7 +14,7 @@ public class Study1 extends UserTester{
 
   void init(){
     PilotStudy.mDesign = getCounterBalancedDesign();
-
+    trailNum = 0;
     trailTarget = new ArrayList<Integer>();
     for(int r=0; r<TARGET_ROW_NUM; r++){
       for(int c=0; c<TARGET_COL_NUM; c++){

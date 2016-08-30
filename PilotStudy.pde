@@ -84,8 +84,8 @@ void updateContent(){
     mShowingTarget = SHOWING_TARGET.EVEN;
     mEvalMode = EVALUATION_MODE.NONE;
   }else if(mContent==CONTENT.EVALUATION){
-    mUserTester = new Evaluation();
+    mUserTester = new Evaluation2();
     mMode = MODE.SHORTEST;
-    mShowingTarget = SHOWING_TARGET.EVEN;
+    mShowingTarget = SHOWING_TARGET.NONE;
   }
 } 

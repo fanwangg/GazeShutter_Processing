@@ -20,7 +20,6 @@ public class Trail{
   static final String DURATION_KEY = "duration";
   static final String MODE_KEY = "mode";
 
-  
   int trailID;
   int userID;
   int target;
@@ -72,6 +71,7 @@ public class Trail{
     json.setInt(TARGET_KEY, target);
     json.setInt(DURATION_KEY, duration);
     json.setString(DESIGN_KEY, design.name());
+    json.setString(MODE_KEY, mode.name());
   
     JSONArray pathJSON = new JSONArray();
     for (int i = 0; i < path.size(); i++){

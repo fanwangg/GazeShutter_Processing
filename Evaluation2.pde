@@ -1,12 +1,12 @@
 import java.util.Collections;
 import java.util.Random;  
 
-public class Evaluation extends UserTester{
+public class Evaluation2 extends UserTester{
   final int DWELL_TIME_SHORT = 500;
-  final int DWELL_TIME_LONG = 1000;
-  public Evaluation(){
+  final int DWELL_TIME_LONG = 750;
+  public Evaluation2(){
     super();
-    TARGET_ROW_NUM = 3;
+    TARGET_ROW_NUM = 4;
     TARGET_COL_NUM = 3;
     TRAIL_PER_TARGET = 8;
     init();
@@ -19,10 +19,8 @@ public class Evaluation extends UserTester{
     trailTarget = new ArrayList<Integer>();
     for(int r=0; r<TARGET_ROW_NUM; r++){
       for(int c=0; c<TARGET_COL_NUM; c++){
-        if((r+c)%2==1){
           for(int t=0; t<TRAIL_PER_TARGET; t++){ 
             trailTarget.add(r*TARGET_COL_NUM+c);
-          }
         }
       }
     }

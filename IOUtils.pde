@@ -45,9 +45,11 @@ void outputTable( ArrayList<Trail> trails){
   table.addColumn("Direction");
   table.addColumn("Target");
   table.addColumn("Distance");
+  table.addColumn("Mode");
   table.addColumn("T_2");
   table.addColumn("T_4");
   table.addColumn("T_Shutter");
+
   
   for(Trail t:trails){
     TableRow newRow = table.addRow();
@@ -56,6 +58,7 @@ void outputTable( ArrayList<Trail> trails){
     newRow.setString("Direction", t.design.name());
     newRow.setInt("Target", t.target);
     newRow.setString("Distance", t.calcDistance().name());
+    newRow.setString("Mode",t.mode.name());
     newRow.setInt("T_2", t.calcStage2Time());
     newRow.setInt("T_4", t.calcStage4Time());
     newRow.setInt("T_Shutter", t.calcShutterTime());

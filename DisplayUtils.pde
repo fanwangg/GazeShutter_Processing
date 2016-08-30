@@ -30,23 +30,24 @@ final int HOMEPOSITION_WIDTH  = 60;
 final int HOMEPOSITION_HEIGHT = 36;
 final int HOMEPOSITION_MARGIN = 10;
 
-final int HALO_BTN_RADIUS = 72;
-final int HALO_BTN_DIAMETER = HALO_BTN_RADIUS*2;
-final int HALO_BTN_DIST_THRESHOLD = 50;
-final int HALO_BTN_DELAY_TIME = 500;//ms
-
 final int INFO_MARGIN_X = 200;
 
 static int targetWidth = WIREFRAME_WIDTH / TARGET_COL_NUM;
 static int targetHeight = WIREFRAME_HEIGHT / TARGET_ROW_NUM;
 final int CROSS_SIZE = 16;
 
+static int HALO_BTN_RADIUS = targetHeight/2;//72;
+static int HALO_BTN_DIAMETER = HALO_BTN_RADIUS*2;
+final int HALO_BTN_DIST_THRESHOLD = 50;
+final int HALO_BTN_DELAY_TIME = 500;//ms
 
 static float DWELL_TIME = 1000;//ms
 
 final int DWELL_PROGRESS_SIZE = 72;
 final String USER_DESIGN = "USER_DESIGN";
 final String USER_NAME   = "USER_NAME";
+
+final String[] PHONE_SYMBOL = new String[]{"1","2","3","4","5","6","7","8","9","*","0","#"};
 
 DropdownList mModeDropdown;
 Textfield mUserIdText;
@@ -84,28 +85,40 @@ int getCurrentTarget(){
 
 void drawTargets(){
   int target=getCurrentTarget();
+  textAlign(CENTER, TOP);
+  textSize(64);
   
-  for(int r=0; r<TARGET_ROW_NUM; r++){
-    for(int c=0; c<TARGET_COL_NUM; c++){
-      if(r*TARGET_COL_NUM + c == target){
-        strokeWeight(STROKE_WEIGHT*2);
-        if(PilotStudy.mUserTester instanceof Evaluation
-          && PilotStudy.mUserTester.currentTrail != null 
-          && PilotStudy.mUserTester.currentTrail.stage==STAGE.STAGE_5)
-          stroke(COLOR_GREEN);
-        else
-          stroke(COLOR_RED);
-        drawCross(int((c+0.5)*targetWidth), int((r+0.5)*targetHeight));  
+  if(PilotStudy.mContent == CONTENT.EVALUATION){
+    for(int r=0; r<TARGET_ROW_NUM; r++){
+      for(int c=0; c<TARGET_COL_NUM; c++){
+        int index = r*TARGET_COL_NUM + c;
+        text(PHONE_SYMBOL[index], (c+0.5)*targetWidth, (r+0.5)*targetHeight);
       }
-      else{
-        strokeWeight(STROKE_WEIGHT);
-        stroke(COLOR_BLACK);
-
-        if(PilotStudy.mShowingTarget == SHOWING_TARGET.ALL){
+    }
+  }else{
+    for(int r=0; r<TARGET_ROW_NUM; r++){
+      for(int c=0; c<TARGET_COL_NUM; c++){
+        if(r*TARGET_COL_NUM + c == target){
+          strokeWeight(STROKE_WEIGHT*2);
+          if(PilotStudy.mUserTester instanceof Evaluation
+            && PilotStudy.mUserTester.currentTrail != null 
+            && PilotStudy.mUserTester.currentTrail.stage==STAGE.STAGE_5)
+            stroke(COLOR_GREEN);
+          else
+            stroke(COLOR_RED);
           drawCross(int((c+0.5)*targetWidth), int((r+0.5)*targetHeight));  
         }
-        else if(PilotStudy.mShowingTarget == SHOWING_TARGET.EVEN && (r+c)%2==1){
-          drawCross(int((c+0.5)*targetWidth), int((r+0.5)*targetHeight));  
+        else{
+          strokeWeight(STROKE_WEIGHT);
+          stroke(COLOR_BLACK);
+
+          if(PilotStudy.mShowingTarget == SHOWING_TARGET.ALL){
+            drawCross(int((c+0.5)*targetWidth), int((r+0.5)*targetHeight));  
+          }
+          else if(PilotStudy.mShowingTarget == SHOWING_TARGET.EVEN && (r+c)%2==1){
+            drawCross(int((c+0.5)*targetWidth), int((r+0.5)*targetHeight));  
+          }
+
         }
       }
     }
@@ -275,6 +288,7 @@ void drawTestingInfo(boolean ambientMode){
   }
 
   textSize(32);
+  textAlign(LEFT, TOP);
   fill(COLOR_BLACK);
   pushMatrix();
   translate(WIREFRAME_UL_X+WIREFRAME_WIDTH+INFO_MARGIN_X, WIREFRAME_UL_Y);
@@ -293,6 +307,7 @@ void drawTestingInfo(boolean ambientMode){
 
 void drawVisInfo(){
   textSize(32);
+  textAlign(LEFT, TOP);
   fill(COLOR_BLACK);
   pushMatrix();
   translate(WIREFRAME_UL_X+WIREFRAME_WIDTH+INFO_MARGIN_X, WIREFRAME_UL_Y);
@@ -306,6 +321,7 @@ void drawVisInfo(){
 
 void drawContentInfo(){
   textSize(32);
+  textAlign(LEFT, TOP);
   fill(COLOR_BLACK);
   pushMatrix();
   translate(WIREFRAME_UL_X+WIREFRAME_WIDTH+INFO_MARGIN_X, WIREFRAME_UL_Y);
@@ -512,5 +528,10 @@ void updateDisplayDimension(UserTester userTester){
   targetWidth = WIREFRAME_WIDTH / TARGET_COL_NUM;
   targetHeight = WIREFRAME_HEIGHT / TARGET_ROW_NUM;
   TOTAL_TRAIL_NUM = userTester.trailTarget.size();
+
+  HALO_BTN_RADIUS = targetHeight/2;//72;
+  HALO_BTN_DIAMETER = HALO_BTN_RADIUS*2;
 }
+
+
 
